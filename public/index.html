@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zaib Collection</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Full Screen Details View Page Overlay (Hidden initially) -->
+    <div id="details-page-overlay" class="details-view-container" style="display:none;">
+        <div class="details-content-card">
+            <button class="close-details-btn" onclick="closeDetailsPage()">&times; Close</button>
+            <div class="details-layout-row">
+                <div class="details-img-block" id="det-img-box"></div>
+                <div class="details-text-block">
+                    <h2 id="det-title"></h2>
+                    <div id="det-price-box"></div>
+                    <p id="det-description"></p>
+                    
+                    <!-- Reviews section restricted strictly inside this page layout -->
+                    <div class="reviews-section">
+                        <h3>Customer Reviews</h3>
+                        <div id="live-reviews-list">
+                            <p style="color:#777; font-size:14px;">★ ★ ★ ★ ★ - "Bohat pyaari quality hai, kapra naram hai."</p>
+                        </div>
+                        <div class="review-inputs-row">
+                            <input type="text" id="rev-name" placeholder="Your Name">
+                            <input type="text" id="rev-text" placeholder="Write a review...">
+                            <button onclick="submitReview()">Post Review</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Layout Structure -->
+    <div id="main-content-layout">
+        <header class="navbar">
+            <div class="logo" onclick="filterProducts('all')" style="cursor: pointer;">Zaib Collection</div>
+            <nav>
+                <a href="#" onclick="filterProducts('all')">All</a>
+                <a href="#" onclick="filterProducts('women')">Women</a>
+                <a href="#" onclick="filterProducts('men')">Men</a>
+                <a href="#" onclick="filterProducts('kids')">Kids</a>
+                <a href="#" onclick="filterProducts('jewelry')">Jewelry</a>
+                <a href="#" onclick="scrollToCheckout()" class="cart-nav">
+                    <i class="fas fa-shopping-cart"></i> Cart (<span id="cart-count">0</span>)
+                </a>
+            </nav>
+        </header>
+
+        <h2 id="collection-title" style="text-align: center; margin-top: 30px; color: #8b7355;">Our Latest Collection</h2>
+        <div id="product-grid" class="products-container"></div>
+
+        <!-- Checkout View Area Element -->
+        <div id="checkout-section" class="checkout-box" style="display: none;">
+            <h3><i class="fas fa-shopping-bag"></i> Order Checkout</h3>
+            <div id="cart-summary-list"></div>
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+            <div class="price-calc-box">
+                <p>Subtotal: <span id="bill-subtotal">Rs. 0</span></p>
+                <p>Delivery Charges: <span id="bill-delivery">Rs. 300</span></p>
+                <h4 style="color: #8b7355; font-size: 18px; margin: 5px 0;">Total Bill: <span id="bill-total">Rs. 0</span></h4>
+            </div>
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+            <div class="form-group">
+                <input type="text" id="cust-name" placeholder="Full Name" required>
+                <input type="text" id="cust-phone" placeholder="Phone Number" required>
+                <input type="text" id="cust-phone2" placeholder="Additional Phone Number (Optional)">
+                <input type="text" id="cust-city" placeholder="City" required>
+                <input type="text" id="cust-province" placeholder="Province" required>
+                <input type="text" id="cust-address" placeholder="Complete Home Address" required>
+            </div>
+            <button class="btn-buy" onclick="placeOrder()">Confirm Order (COD)</button>
+        </div>
+        <footer>Contact: seharkhan2028@gmail.com | Since 2020</footer>
+    </div>
+
+    <script>
+        let allProducts = []; 
+        let cart = {}; 
+        const DELIVERY_CHARGES = 300;
+
+        async function loadProducts() {
+            const response = await fetch('/api/products');
+            allProducts = await response.json();
+            displayProducts(allProducts);
+        }
+
+        function displayProducts(productsToRules) {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+
+            productsToRules.forEach((product, index) => {
+                const pId = product.name.replace(/\s+/g, '-').toLowerCase();
+                
+                // Tag HTML Logic rules configurations
+                let tagHTML = '';
+                if(product.statusTag === 'soldout') {
+                    tagHTML = `<span class="badge badge-sold">SOLD OUT</span>`;
+                } else if(product.statusTag === 'sale') {
+                    tagHTML = `<span class="badge badge-sale">ON SALE</span>`;
+                }
+
+                // Price Layout Rule logic calculation
+                let priceHTML = `<p class="price">Rs. ${product.price}</p>`;
+                if(product.statusTag === 'sale' && product.oldPrice) {
+                    priceHTML = `
+                        <p class="price">
+                            <span class="old-price-cut">Rs. ${product.oldPrice}</span> 
+                            <span style="font-weight:bold; color:#b45309;">Rs. ${product.price}</span>
+                        </p>`;
+                }
+
+                grid.innerHTML += `
+                    <div class="product-card">
+                        <div style="position:relative; cursor:pointer;" onclick="openDetailsPage(${index})">
+                            ${tagHTML}
+                            ${product.imageUrl ? `<img src="${product.imageUrl}" alt="${product.name}">` : `<div class="product-img-placeholder">👗 No Image</div>`}
+                        </div>
+                        <h4 onclick="openDetailsPage(${index})" style="cursor:pointer;">${product.name}</h4>
+                        ${priceHTML}
+                        
+                        <div class="quantity-selector">
+                            <button onclick="changeQtyValue('${pId}', -1)">-</button>
+                            <span id="qty-${pId}">1</span>
+                            <button onclick="changeQtyValue('${pId}', 1)">+</button>
+                        </div>
+                        <div class="card-buttons-row">
+                            <button class="btn-secondary" onclick="addToCart('${index}', '${pId}')" ${product.statusTag === 'soldout' ? 'disabled style="background:#ccc;"' : ''}>Add to Cart</button>
+                            <button class="btn-primary" onclick="buyNow('${index}', '${pId}')" ${product.statusTag === 'soldout' ? 'disabled style="background:#ccc;"' : ''}>Buy Now</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function changeQtyValue(pId, change) {
+            const qtyElement = document.getElementById(`qty-${pId}`);
+            let currentQty = parseInt(qtyElement.innerText);
+            currentQty += change; if (currentQty < 1) currentQty = 1;
+            qtyElement.innerText = currentQty;
+        }
+
+        function addToCart(index, pId) {
+            const product = allProducts[index];
+            const qtySelected = parseInt(document.getElementById(`qty-${pId}`).innerText);
+            if (cart[product.name]) { cart[product.name].quantity += qtySelected; } 
+            else { cart[product.name] = { price: parseInt(product.price), quantity: qtySelected }; }
+            updateCartUI();
+            alert("Added to cart!");
+            document.getElementById(`qty-${pId}`).innerText = 1;
+        }
+
+        function buyNow(index, pId) {
+            const product = allProducts[index];
+            const qtySelected = parseInt(document.getElementById(`qty-${pId}`).innerText);
+            cart[product.name] = { price: parseInt(product.price), quantity: qtySelected };
+            updateCartUI();
+            scrollToCheckout();
+        }
+
+        function updateCartUI() {
+            let totalItems = 0, subtotal = 0;
+            const summaryList = document.getElementById('cart-summary-list');
+            summaryList.innerHTML = '';
+            for (const name in cart) {
+                totalItems += cart[name].quantity;
+                subtotal += (cart[name].price * cart[name].quantity);
+                summaryList.innerHTML += `<div class="cart-summary-item"><span><strong>${name}</strong> (x${cart[name].quantity})</span><span>Rs. ${cart[name].price * cart[name].quantity}</span></div>`;
+            }
+            document.getElementById('cart-count').innerText = totalItems;
+            document.getElementById('bill-subtotal').innerText = `Rs. ${subtotal}`;
+            if (totalItems > 0) {
+                document.getElementById('checkout-section').style.display = 'block';
+                document.getElementById('bill-total').innerText = `Rs. ${subtotal + DELIVERY_CHARGES}`;
+            } else { document.getElementById('checkout-section').style.display = 'none'; }
+        }
+
+        function openDetailsPage(index) {
+            const product = allProducts[index];
+            const pId = product.name.replace(/\s+/g, '-').toLowerCase();
+            
+            document.getElementById('det-title').innerText = product.name;
+            document.getElementById('det-description').innerText = product.details || "No additional parameters provided.";
+            
+            let imgHTML = product.imageUrl ? `<img src="${product.imageUrl}" style="width:100%; max-height:400px; object-fit:cover; border-radius:8px;">` : '👗 No Image';
+            document.getElementById('det-img-box').innerHTML = imgHTML;
+
+            let priceHTML = `<h3>Rs. ${product.price}</h3>`;
+            if(product.statusTag === 'sale' && product.oldPrice) {
+                priceHTML = `<h3><span class="old-price-cut">Rs. ${product.oldPrice}</span> <span style="color:#b45309;">Rs. ${product.price}</span></h3>`;
+            }
+            
+            priceHTML += `
+                <div class="quantity-selector" style="justify-content: flex-start; margin: 20px 0;">
+                    <button onclick="changeQtyValue('${pId}-det', -1)">-</button>
+                    <span id="qty-${pId}-det">1</span>
+                    <button onclick="changeQtyValue('${pId}-det', 1)">+</button>
+                </div>
+                <div class="card-buttons-row" style="max-width: 300px;">
+                    <button class="btn-secondary" onclick="addToCartFromDetails('${index}', '${pId}-det')" ${product.statusTag === 'soldout' ? 'disabled style="background:#ccc;"' : ''}>Add to Cart</button>
+                    <button class="btn-primary" onclick="buyNowFromDetails('${index}', '${pId}-det')" ${product.statusTag === 'soldout' ? 'disabled style="background:#ccc;"' : ''}>Buy Now</button>
+                </div>
+            `;
+            
+            document.getElementById('det-price-box').innerHTML = priceHTML;
+
+            document.getElementById('main-content-layout').style.display = 'block'; 
+            document.getElementById('product-grid').style.display = 'none'; 
+            document.getElementById('collection-title').style.display = 'none'; 
+            document.getElementById('details-page-overlay').style.display = 'block'; 
+            window.scrollTo(0,0);
+        }
+
+        function closeDetailsPage() {
+            document.getElementById('details-page-overlay').style.display = 'none';
+            document.getElementById('product-grid').style.display = 'grid'; 
+            document.getElementById('collection-title').style.display = 'block'; 
+        }
+
+        function addToCartFromDetails(index, detailPId) {
+            const product = allProducts[index];
+            const qtySelected = parseInt(document.getElementById(`qty-${detailPId}`).innerText);
+            
+            if (cart[product.name]) { 
+                cart[product.name].quantity += qtySelected; 
+            } else { 
+                cart[product.name] = { price: parseInt(product.price), quantity: qtySelected }; 
+            }
+            updateCartUI();
+            alert(`${qtySelected} x ${product.name} added to cart!`);
+            document.getElementById(`qty-${detailPId}`).innerText = 1;
+        }
+
+        function buyNowFromDetails(index, detailPId) {
+            const product = allProducts[index];
+            const qtySelected = parseInt(document.getElementById(`qty-${detailPId}`).innerText);
+            
+            cart[product.name] = { price: parseInt(product.price), quantity: qtySelected };
+            updateCartUI();
+            
+            closeDetailsPage();
+            scrollToCheckout();
+        }
+
+        function submitReview() {
+            const name = document.getElementById('rev-name').value;
+            const text = document.getElementById('rev-text').value;
+            if(!name || !text) return;
+            document.getElementById('live-reviews-list').innerHTML += `<p style="color:#333; font-size:14px;"><strong>${name}</strong>: "${text}"</p>`;
+            document.getElementById('rev-name').value = '';
+            document.getElementById('rev-text').value = '';
+        }
+
+        // Yahan aap ka real email order submit karne wala new function successfully insert ho gaya hai:
+        async function placeOrder() {
+            const name = document.getElementById('cust-name').value;
+            const phone = document.getElementById('cust-phone').value;
+            const phone2 = document.getElementById('cust-phone2').value;
+            const city = document.getElementById('cust-city').value;
+            const province = document.getElementById('cust-province').value;
+            const address = document.getElementById('cust-address').value;
+
+            if (!name || !phone || !city || !province || !address) {
+                alert("Please fill all required fields before confirming order.");
+                return;
+            }
+
+            const subtotal = Object.values(cart).reduce((acc, item) => acc + (item.price * item.quantity), 0);
+            const total = subtotal + DELIVERY_CHARGES;
+
+            const orderData = {
+                name, phone, phone2, city, province, address,
+                cart, subtotal, delivery: DELIVERY_CHARGES, total
+            };
+
+            try {
+                const response = await fetch('/api/place-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert("🎉 Shukriya! Aap ka order confirm ho chuka hai aur details admin ko email kar di gayi hain.");
+                    cart = {};
+                    updateCartUI();
+                    
+                    document.getElementById('cust-name').value = '';
+                    document.getElementById('cust-phone').value = '';
+                    document.getElementById('cust-phone2').value = '';
+                    document.getElementById('cust-city').value = '';
+                    document.getElementById('cust-province').value = '';
+                    document.getElementById('cust-address').value = '';
+                } else {
+                    alert("Error: Order place nahi ho saka. " + result.message);
+                }
+            } catch (err) {
+                console.error("Checkout Error:", err);
+                alert("Server network issue. Please try again.");
+            }
+        }
+
+        function scrollToCheckout() { document.getElementById('checkout-section').scrollIntoView({ behavior: 'smooth' }); }
+        
+        function filterProducts(category) {
+            if (category === 'all') { displayProducts(allProducts); } 
+            else { displayProducts(allProducts.filter(p => p.category === category)); }
+        }
+        
+        window.onload = loadProducts;
+    </script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+/* Base Styles */
+body { background-color: #fcfbf9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; color: #333; }
+.navbar { background-color: #5c8091; color: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+.logo { font-size: 24px; font-weight: bold; }
+.navbar nav { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+.navbar a { color: white; text-decoration: none; font-weight: bold; padding: 5px 8px; border-radius: 4px; transition: 0.3s; }
+.navbar a:hover { background-color: rgba(255,255,255,0.2); }
+.cart-nav { background-color: #8b7355; padding: 6px 12px !important; border-radius: 20px; }
+
+/* Grid Dynamic Configuration: Desktop 3-Columns, Tablet 2, Mobile 1 */
+.products-container { 
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 30px; 
+    padding: 30px 5%; 
+    max-width: 1200px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+@media (max-width: 992px) {
+    .products-container { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+    .products-container { grid-template-columns: 1fr; }
+    .navbar { flex-direction: column; gap: 10px; text-align: center; }
+}
+
+/* Product Cards configuration */
+.product-card { background: white; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s; }
+.product-card:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.05); }
+.product-card img { width: 100%; height: 230px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; }
+.product-img-placeholder { background-color: #f1f5f9; height: 230px; display: flex; align-items: center; justify-content: center; border-radius: 8px; color: #94a3b8; font-weight: bold; margin-bottom: 15px; }
+.product-card h4 { margin: 10px 0 5px 0; font-size: 18px; color: #1e293b; }
+.product-card p { color: #64748b; font-size: 14px; margin: 5px 0 15px 0; }
+.product-card .price { font-weight: bold; color: #8b7355; font-size: 20px; margin-bottom: 15px; }
+
+/* Operational Counter Interface Elements */
+.quantity-selector { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 15px; }
+.quantity-selector button { background-color: #e2e8f0; border: none; font-size: 16px; font-weight: bold; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; transition: 0.2s; }
+.quantity-selector button:hover { background-color: #cbd5e1; }
+.quantity-selector span { font-size: 16px; font-weight: bold; min-width: 20px; }
+
+.card-buttons-row { display: flex; gap: 10px; }
+.btn-primary { background-color: #8b7355; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; flex: 1; transition: 0.2s; }
+.btn-primary:hover { background-color: #725e45; }
+.btn-secondary { background-color: #5c8091; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; flex: 1; transition: 0.2s; }
+.btn-secondary:hover { background-color: #496776; }
+
+/* Billing System Structures */
+.checkout-box { background: white; max-width: 550px; margin: 40px auto; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); box-sizing: border-box; }
+.cart-summary-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 15px; }
+.trash-btn { color: #ef4444; margin-left: 10px; cursor: pointer; }
+.price-calc-box p { display: flex; justify-content: space-between; margin: 6px 0; color: #475569; }
+.price-calc-box h4 { display: flex; justify-content: space-between; border-top: 1px dashed #cbd5e1; padding-top: 8px; }
+
+/* Structural Inputs for forms */
+.form-group input { width: 100%; padding: 11px; margin-bottom: 12px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
+.form-group input:focus { border-color: #5c8091; outline: none; }
+.btn-buy { background-color: #22c55e; color: white; border: none; padding: 14px; border-radius: 6px; cursor: pointer; width: 100%; font-size: 16px; font-weight: bold; transition: 0.2s; margin-top: 10px; }
+.btn-buy:hover { background-color: #16a34a; }
+
+footer { background-color: #1e293b; color: #94a3b8; text-align: center; padding: 25px; margin-top: 60px; font-size: 14px; }
+/* Badges Styling rules */
+.badge { position: absolute; top: 10px; left: 10px; padding: 5px 10px; font-size: 11px; font-weight: bold; border-radius: 4px; color: white; z-index: 10; }
+.badge-sold { background-color: #ef4444; }
+.badge-sale { background-color: #b45309; }
+
+/* Strikethrough for old pricing parameters */
+.old-price-cut { text-decoration: line-through; color: #94a3b8; font-size: 15px; margin-right: 8px; font-weight: normal; }
+
+/* Details Single View Page Layout Configuration */
+.details-view-container { max-width: 1000px; margin: 30px auto; padding: 20px; box-sizing: border-box; }
+.details-content-card { background: white; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0; }
+.close-details-btn { background: #64748b; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; float: right; }
+.details-layout-row { display: flex; gap: 40px; margin-top: 30px; flex-wrap: wrap; }
+.details-img-block { flex: 1; min-width: 300px; }
+.details-text-block { flex: 1; min-width: 300px; }
+
+/* Isolated Reviews box rules inside single view */
+.reviews-section { margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 20px; }
+.review-inputs-row { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
+.review-inputs-row input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; flex: 1; }
+.review-inputs-row button { background: #5c8091; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
