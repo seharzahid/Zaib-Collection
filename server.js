@@ -7,9 +7,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const path = require('path');
 app.use(express.static(path.join(__dirname, 'public')));
-
-const upload = multer({ dest: 'public/uploads/' });
-
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 // Cloudinary Setup
 cloudinary.config({
     cloud_name: 'dqg9fndlt',
@@ -62,34 +61,35 @@ app.get('/api/products', async (req, res) => {
     }
 });
 
-// 2. Add New Product to MongoDB Cloud Tijoori
-app.post('/api/products', upload.array('images', 10), async (req, res) => {
+app.post('/api/products', upload.single('image'), async (req, res) => {
     try {
-        const { name, price, oldPrice, details, category, statusTag } = req.body;
-        let imageUrls = [];
-        
-        if (req.files && req.files.length > 0) {
-            for (const file of req.files) {
-                const result = await cloudinary.uploader.upload(file.path, { folder: 'zaib_collection' });
-                imageUrls.push(result.secure_url);
-            }
+        if (!req.file) {
+            return res.status(400).json({ success: false, error: "Image file is required" });
         }
 
-        const newProduct = new Product({
-            name,
-            price: parseInt(price),
-            oldPrice: oldPrice ? parseInt(oldPrice) : null,
-            details,
-            category,
-            statusTag: statusTag || "normal",
-            imageUrl: imageUrls[0] || "",
-            allImages: imageUrls
-        });
+        // Memory buffer se Cloudinary par image upload karne ka behtareen tareeka:
+        cloudinary.uploader.upload_stream({ folder: "zaib_collection" }, async (error, result) => {
+            if (error) {
+                console.error("Cloudinary Error:", error);
+                return res.status(500).json({ success: false, error: "Image upload failed" });
+            }
 
-        await newProduct.save(); 
-        res.send(`<script>alert('Product Successfully Saved to Cloud Database!'); window.location.href = '/admin.html';</script>`);
+            // Image URL milne ke baad database mein save karein
+            const newProduct = new Product({
+                title: req.body.title,
+                price: req.body.price,
+                description: req.body.description,
+                category: req.body.category,
+                imageUrl: result.secure_url // Cloudinary secure link
+            });
+
+            await newProduct.save();
+            res.json({ success: true, message: "Product saved successfully!" });
+        }).end(req.file.buffer);
+
     } catch (err) {
-        res.status(500).send("Database Save Error: " + err.message);
+        console.error("Server Error:", err);
+        res.status(500).json({ success: false, error: err.message });
     }
 });
 
@@ -104,44 +104,6 @@ app.delete('/api/products/:id', async (req, res) => {
     }
 });
 
-// 2. Add New Product with Tags and Old Price
-app.post('/api/products', upload.array('images', 10), async (req, res) => {
-    try {
-        const { name, price, oldPrice, details, category, statusTag } = req.body;
-        let imageUrls = [];
-        
-        if (req.files && req.files.length > 0) {
-            for (const file of req.files) {
-                const result = await cloudinary.uploader.upload(file.path, { folder: 'zaib_collection' });
-                imageUrls.push(result.secure_url);
-            }
-        }
-
-        const newProduct = {
-            id: Date.now().toString(), // Unique ID delete karne ke liye
-            name,
-            price: parseInt(price),
-            oldPrice: oldPrice ? parseInt(oldPrice) : null,
-            details,
-            category,
-            statusTag: statusTag || "normal",
-            imageUrl: imageUrls[0] || "",
-            allImages: imageUrls
-        };
-
-        localProducts.push(newProduct);
-        res.send(`<script>alert('Product Successfully Added!'); window.location.href = '/admin.html';</script>`);
-    } catch (err) {
-        res.status(500).send("Error: " + err.message);
-    }
-});
-
-// 3. Delete Product API
-app.delete('/api/products/:id', (req, res) => {
-    const { id } = req.params;
-    localProducts = localProducts.filter(p => p.id !== id);
-    res.json({ success: true, message: "Product deleted successfully" });
-});
 const nodemailer = require('nodemailer'); // Yeh line file ke sab se upar check kar lein agar pehle se nahi hai
 
 // Nodemailer Transporter Setup (Gmail Configuration)
