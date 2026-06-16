@@ -21,8 +21,10 @@ const DB_URI = "mongodb+srv://seharkhan2028_db_user:qHl5SfLATd6q1H3e@cluster0.0n
 
 mongoose.connect(DB_URI)
     .then(() => console.log("🚀 MongoDB Cloud Database Connected Successfully!"))
-    .catch(err => console.error("❌ Database Connection Error:", err));
-
+    .catch(err => {
+        console.error("❌ Database Connection Error:", err);
+        // Agar cloud database connect na ho sake toh crash hone ke bajaye error logs mein show ho
+    });
 // MongoDB Schema (Tijoori ka structure ke data kaise save hoga)
 const productSchema = new mongoose.Schema({
     name: { type: String, required: true },
