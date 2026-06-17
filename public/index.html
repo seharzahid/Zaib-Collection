@@ -79,6 +79,8 @@
         let allProducts = []; 
         let cart = {}; 
         const DELIVERY_CHARGES = 300;
+        const productImageLists = {};
+        const productImageIndices = {};
 
         async function loadProducts() {
             const response = await fetch('/api/products');
@@ -89,6 +91,8 @@
         function displayProducts(productsToRules) {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = '';
+            Object.keys(productImageLists).forEach(key => delete productImageLists[key]);
+            Object.keys(productImageIndices).forEach(key => delete productImageIndices[key]);
 
             productsToRules.forEach((product, index) => {
                 const pId = product.name.replace(/\s+/g, '-').toLowerCase();
@@ -109,21 +113,27 @@
                         </p>`;
                 }
 
-                // Smart Image Logic: prefer `allImages[0]` when available, then legacy `imageUrl`, otherwise empty
-                let finalImgSrc = '';
-                if (Array.isArray(product.allImages) && product.allImages.length > 0) {
-                    finalImgSrc = product.allImages[0];
-                } else if (typeof product.imageUrl === 'string' && product.imageUrl.trim() !== '') {
-                    finalImgSrc = product.imageUrl;
-                } else {
-                    finalImgSrc = '';
-                }
+                const imageList = Array.isArray(product.allImages) && product.allImages.length > 0
+                    ? product.allImages.slice()
+                    : (typeof product.imageUrl === 'string' && product.imageUrl.trim() !== '')
+                        ? [product.imageUrl]
+                        : [];
+
+                productImageLists[index] = imageList;
+                productImageIndices[index] = 0;
+
+                const hasMultipleImages = imageList.length > 1;
+                const initialImgSrc = imageList[0] || '';
 
                 grid.innerHTML += `
                     <div class="product-card">
                         <div style="position:relative; cursor:pointer;" onclick="openDetailsPage(${index})">
                             ${tagHTML}
-                            ${finalImgSrc ? `<img src="${finalImgSrc}" alt="${product.name}">` : `<div class="product-img-placeholder">👗 No Image</div>`}
+                            ${initialImgSrc ? `<img id="product-image-${index}" src="${initialImgSrc}" alt="${product.name}">` : `<div class="product-img-placeholder">👗 No Image</div>`}
+                            ${hasMultipleImages ? `
+                                <button type="button" onclick="event.stopPropagation(); changeProductImage(${index}, -1)" style="position:absolute; top:50%; left:10px; transform:translateY(-50%); background:rgba(0,0,0,0.45); color:#fff; border:none; width:32px; height:32px; border-radius:50%; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;">&#8249;</button>
+                                <button type="button" onclick="event.stopPropagation(); changeProductImage(${index}, 1)" style="position:absolute; top:50%; right:10px; transform:translateY(-50%); background:rgba(0,0,0,0.45); color:#fff; border:none; width:32px; height:32px; border-radius:50%; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;">&#8250;</button>
+                            ` : ''}
                         </div>
                         <h4 onclick="openDetailsPage(${index})" style="cursor:pointer;">${product.name}</h4>
                         ${priceHTML}
@@ -140,6 +150,22 @@
                     </div>
                 `;
             });
+        }
+
+        function changeProductImage(productIndex, direction) {
+            const images = productImageLists[productIndex];
+            if (!Array.isArray(images) || images.length === 0) return;
+
+            const imgElement = document.getElementById(`product-image-${productIndex}`);
+            if (!imgElement) return;
+
+            const currentIndex = typeof productImageIndices[productIndex] === 'number'
+                ? productImageIndices[productIndex]
+                : 0;
+
+            const nextIndex = (currentIndex + direction + images.length) % images.length;
+            productImageIndices[productIndex] = nextIndex;
+            imgElement.src = images[nextIndex];
         }
 
         function changeQtyValue(pId, change) {
