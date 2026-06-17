@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Full Screen Details View Page Overlay (Hidden initially) -->
     <div id="details-page-overlay" class="details-view-container" style="display:none;">
         <div class="details-content-card">
             <button class="close-details-btn" onclick="closeDetailsPage()">&times; Close</button>
@@ -19,7 +18,6 @@
                     <div id="det-price-box"></div>
                     <p id="det-description"></p>
                     
-                    <!-- Reviews section restricted strictly inside this page layout -->
                     <div class="reviews-section">
                         <h3>Customer Reviews</h3>
                         <div id="live-reviews-list">
@@ -36,7 +34,6 @@
         </div>
     </div>
 
-    <!-- Main Content Layout Structure -->
     <div id="main-content-layout">
         <header class="navbar">
             <div class="logo" onclick="filterProducts('all')" style="cursor: pointer;">Zaib Collection</div>
@@ -55,7 +52,6 @@
         <h2 id="collection-title" style="text-align: center; margin-top: 30px; color: #8b7355;">Our Latest Collection</h2>
         <div id="product-grid" class="products-container"></div>
 
-        <!-- Checkout View Area Element -->
         <div id="checkout-section" class="checkout-box" style="display: none;">
             <h3><i class="fas fa-shopping-bag"></i> Order Checkout</h3>
             <div id="cart-summary-list"></div>
@@ -97,7 +93,6 @@
             productsToRules.forEach((product, index) => {
                 const pId = product.name.replace(/\s+/g, '-').toLowerCase();
                 
-                // Tag HTML Logic rules configurations
                 let tagHTML = '';
                 if(product.statusTag === 'soldout') {
                     tagHTML = `<span class="badge badge-sold">SOLD OUT</span>`;
@@ -105,7 +100,6 @@
                     tagHTML = `<span class="badge badge-sale">ON SALE</span>`;
                 }
 
-                // Price Layout Rule logic calculation
                 let priceHTML = `<p class="price">Rs. ${product.price}</p>`;
                 if(product.statusTag === 'sale' && product.oldPrice) {
                     priceHTML = `
@@ -115,24 +109,19 @@
                         </p>`;
                 }
 
-                // 🎯 FINAL FIX: Purana single link aur naya array dono ko check karne ka smart logic
-                let imageUrlToDisplay = 'placeholder.png'; // Default
-                
+                // Smart Image Logic: Array check karein ya purana single link check karein
+                let finalImgSrc = '';
                 if (product.images && product.images.length > 0) {
-                    // Agar naya array hai (Jasmin naya push hone ke baad)
-                    imageUrlToDisplay = product.images[0];
+                    finalImgSrc = product.images[0];
                 } else if (product.imageUrl) {
-                    // Agar purana single field hai (Gulshen purana product)
-                    imageUrlToDisplay = product.imageUrl;
+                    finalImgSrc = product.imageUrl;
                 }
 
                 grid.innerHTML += `
                     <div class="product-card">
                         <div style="position:relative; cursor:pointer;" onclick="openDetailsPage(${index})">
                             ${tagHTML}
-                            ${imageUrlToDisplay !== 'placeholder.png' 
-                                ? `<img src="${imageUrlToDisplay}" alt="${product.name}">` 
-                                : `<div class="product-img-placeholder">👗 No Image</div>`}
+                            ${finalImgSrc ? `<img src="${finalImgSrc}" alt="${product.name}">` : `<div class="product-img-placeholder">👗 No Image</div>`}
                         </div>
                         <h4 onclick="openDetailsPage(${index})" style="cursor:pointer;">${product.name}</h4>
                         ${priceHTML}
@@ -150,6 +139,7 @@
                 `;
             });
         }
+
         function changeQtyValue(pId, change) {
             const qtyElement = document.getElementById(`qty-${pId}`);
             let currentQty = parseInt(qtyElement.innerText);
@@ -199,9 +189,14 @@
             document.getElementById('det-title').innerText = product.name;
             document.getElementById('det-description').innerText = product.details || "No additional parameters provided.";
             
-            // Array ki pehli image nikalne ka logic popup ke liye
-            const firstImage = product.images && product.images.length > 0 ? product.images[0] : null;
-            let imgHTML = firstImage ? `<img src="${firstImage}" style="width:100%; max-height:400px; object-fit:cover; border-radius:8px;">` : '👗 No Image';
+            let finalImgSrc = '';
+            if (product.images && product.images.length > 0) {
+                finalImgSrc = product.images[0];
+            } else if (product.imageUrl) {
+                finalImgSrc = product.imageUrl;
+            }
+
+            let imgHTML = finalImgSrc ? `<img src="${finalImgSrc}" style="width:100%; max-height:400px; object-fit:cover; border-radius:8px;">` : '👗 No Image';
             document.getElementById('det-img-box').innerHTML = imgHTML;
 
             let priceHTML = `<h3>Rs. ${product.price}</h3>`;
@@ -270,7 +265,6 @@
             document.getElementById('rev-text').value = '';
         }
 
-        // Yahan aap ka real email order submit karne wala new function successfully insert ho gaya hai:
         async function placeOrder() {
             const name = document.getElementById('cust-name').value;
             const phone = document.getElementById('cust-phone').value;
