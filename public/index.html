@@ -115,11 +115,14 @@
                         </p>`;
                 }
 
+                // Array ki pehli image nikalne ka logic
+                const firstImage = product.images && product.images.length > 0 ? product.images[0] : null;
+
                 grid.innerHTML += `
                     <div class="product-card">
                         <div style="position:relative; cursor:pointer;" onclick="openDetailsPage(${index})">
                             ${tagHTML}
-                            ${product.imageUrl ? `<img src="${product.imageUrl}" alt="${product.name}">` : `<div class="product-img-placeholder">👗 No Image</div>`}
+                            ${firstImage ? `<img src="${firstImage}" alt="${product.name}">` : `<div class="product-img-placeholder">👗 No Image</div>`}
                         </div>
                         <h4 onclick="openDetailsPage(${index})" style="cursor:pointer;">${product.name}</h4>
                         ${priceHTML}
@@ -137,7 +140,6 @@
                 `;
             });
         }
-
         function changeQtyValue(pId, change) {
             const qtyElement = document.getElementById(`qty-${pId}`);
             let currentQty = parseInt(qtyElement.innerText);
@@ -187,7 +189,9 @@
             document.getElementById('det-title').innerText = product.name;
             document.getElementById('det-description').innerText = product.details || "No additional parameters provided.";
             
-            let imgHTML = product.imageUrl ? `<img src="${product.imageUrl}" style="width:100%; max-height:400px; object-fit:cover; border-radius:8px;">` : '👗 No Image';
+            // Array ki pehli image nikalne ka logic popup ke liye
+            const firstImage = product.images && product.images.length > 0 ? product.images[0] : null;
+            let imgHTML = firstImage ? `<img src="${firstImage}" style="width:100%; max-height:400px; object-fit:cover; border-radius:8px;">` : '👗 No Image';
             document.getElementById('det-img-box').innerHTML = imgHTML;
 
             let priceHTML = `<h3>Rs. ${product.price}</h3>`;
