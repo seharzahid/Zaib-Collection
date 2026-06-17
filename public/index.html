@@ -109,12 +109,14 @@
                         </p>`;
                 }
 
-                // Smart Image Logic: Array check karein ya purana single link check karein
+                // Smart Image Logic: prefer `images[0]` when array, fallback to legacy `imageUrl`, otherwise empty
                 let finalImgSrc = '';
-                if (product.images && product.images.length > 0) {
+                if (Array.isArray(product.images) && product.images.length > 0) {
                     finalImgSrc = product.images[0];
-                } else if (product.imageUrl) {
+                } else if (typeof product.imageUrl === 'string' && product.imageUrl.trim() !== '') {
                     finalImgSrc = product.imageUrl;
+                } else {
+                    finalImgSrc = '';
                 }
 
                 grid.innerHTML += `
@@ -189,11 +191,14 @@
             document.getElementById('det-title').innerText = product.name;
             document.getElementById('det-description').innerText = product.details || "No additional parameters provided.";
             
+            // Smart Image Logic: prefer `images[0]` when array, fallback to legacy `imageUrl`, otherwise show placeholder
             let finalImgSrc = '';
-            if (product.images && product.images.length > 0) {
+            if (Array.isArray(product.images) && product.images.length > 0) {
                 finalImgSrc = product.images[0];
-            } else if (product.imageUrl) {
+            } else if (typeof product.imageUrl === 'string' && product.imageUrl.trim() !== '') {
                 finalImgSrc = product.imageUrl;
+            } else {
+                finalImgSrc = '';
             }
 
             let imgHTML = finalImgSrc ? `<img src="${finalImgSrc}" style="width:100%; max-height:400px; object-fit:cover; border-radius:8px;">` : '👗 No Image';
