@@ -109,10 +109,10 @@
                         </p>`;
                 }
 
-                // Smart Image Logic: prefer `images[0]` when array, fallback to legacy `imageUrl`, otherwise empty
+                // Smart Image Logic: prefer `allImages[0]` when available, then legacy `imageUrl`, otherwise empty
                 let finalImgSrc = '';
-                if (Array.isArray(product.images) && product.images.length > 0) {
-                    finalImgSrc = product.images[0];
+                if (Array.isArray(product.allImages) && product.allImages.length > 0) {
+                    finalImgSrc = product.allImages[0];
                 } else if (typeof product.imageUrl === 'string' && product.imageUrl.trim() !== '') {
                     finalImgSrc = product.imageUrl;
                 } else {
@@ -191,10 +191,10 @@
             document.getElementById('det-title').innerText = product.name;
             document.getElementById('det-description').innerText = product.details || "No additional parameters provided.";
             
-            // Smart Image Logic: prefer `images[0]` when array, fallback to legacy `imageUrl`, otherwise show placeholder
+            // Smart Image Logic: prefer `allImages[0]` when available, then legacy `imageUrl`, otherwise show placeholder
             let finalImgSrc = '';
-            if (Array.isArray(product.images) && product.images.length > 0) {
-                finalImgSrc = product.images[0];
+            if (Array.isArray(product.allImages) && product.allImages.length > 0) {
+                finalImgSrc = product.allImages[0];
             } else if (typeof product.imageUrl === 'string' && product.imageUrl.trim() !== '') {
                 finalImgSrc = product.imageUrl;
             } else {
