@@ -81,6 +81,8 @@
         const DELIVERY_CHARGES = 300;
         const productImageLists = {};
         const productImageIndices = {};
+        const productDetailImageLists = {};
+        const productDetailImageIndices = {};
 
         async function loadProducts() {
             const response = await fetch('/api/products');
@@ -168,6 +170,22 @@
             imgElement.src = images[nextIndex];
         }
 
+        function changeDetailImage(productIndex, direction) {
+            const images = productDetailImageLists[productIndex];
+            if (!Array.isArray(images) || images.length === 0) return;
+
+            const imgElement = document.getElementById(`detail-image-${productIndex}`);
+            if (!imgElement) return;
+
+            const currentIndex = typeof productDetailImageIndices[productIndex] === 'number'
+                ? productDetailImageIndices[productIndex]
+                : 0;
+
+            const nextIndex = (currentIndex + direction + images.length) % images.length;
+            productDetailImageIndices[productIndex] = nextIndex;
+            imgElement.src = images[nextIndex];
+        }
+
         function changeQtyValue(pId, change) {
             const qtyElement = document.getElementById(`qty-${pId}`);
             let currentQty = parseInt(qtyElement.innerText);
@@ -217,17 +235,33 @@
             document.getElementById('det-title').innerText = product.name;
             document.getElementById('det-description').innerText = product.details || "No additional parameters provided.";
             
-            // Smart Image Logic: prefer `allImages[0]` when available, then legacy `imageUrl`, otherwise show placeholder
-            let finalImgSrc = '';
-            if (Array.isArray(product.allImages) && product.allImages.length > 0) {
-                finalImgSrc = product.allImages[0];
-            } else if (typeof product.imageUrl === 'string' && product.imageUrl.trim() !== '') {
-                finalImgSrc = product.imageUrl;
+            const detailImageList = Array.isArray(product.allImages) && product.allImages.length > 0
+                ? product.allImages.slice()
+                : (typeof product.imageUrl === 'string' && product.imageUrl.trim() !== '')
+                    ? [product.imageUrl]
+                    : [];
+
+            productDetailImageLists[index] = detailImageList;
+            productDetailImageIndices[index] = 0;
+
+            const hasDetailMultipleImages = detailImageList.length > 1;
+            const initialDetailImgSrc = detailImageList[0] || '';
+
+            let imgHTML = '';
+            if (initialDetailImgSrc) {
+                imgHTML = `
+                    <div style="position:relative; cursor:default;">
+                        <img id="detail-image-${index}" src="${initialDetailImgSrc}" style="width:100%; max-height:400px; object-fit:cover; border-radius:8px; display:block;">
+                        ${hasDetailMultipleImages ? `
+                            <button type="button" onclick="event.stopPropagation(); changeDetailImage(${index}, -1)" style="position:absolute; top:50%; left:12px; transform:translateY(-50%); background:rgba(0,0,0,0.5); color:#fff; border:none; width:36px; height:36px; border-radius:50%; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center;">&#8249;</button>
+                            <button type="button" onclick="event.stopPropagation(); changeDetailImage(${index}, 1)" style="position:absolute; top:50%; right:12px; transform:translateY(-50%); background:rgba(0,0,0,0.5); color:#fff; border:none; width:36px; height:36px; border-radius:50%; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center;">&#8250;</button>
+                        ` : ''}
+                    </div>
+                `;
             } else {
-                finalImgSrc = '';
+                imgHTML = '<div class="product-img-placeholder">👗 No Image</div>';
             }
 
-            let imgHTML = finalImgSrc ? `<img src="${finalImgSrc}" style="width:100%; max-height:400px; object-fit:cover; border-radius:8px;">` : '👗 No Image';
             document.getElementById('det-img-box').innerHTML = imgHTML;
 
             let priceHTML = `<h3>Rs. ${product.price}</h3>`;
