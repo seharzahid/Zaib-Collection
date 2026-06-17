@@ -61,35 +61,48 @@ app.get('/api/products', async (req, res) => {
     }
 });
 
-app.post('/api/products', upload.single('image'), async (req, res) => {
+// 1. Multer ko batayein ke 'images' ke naam se maximum 5 files accept karey
+app.post('/api/products', upload.array('images', 5), async (req, res) => {
     try {
-        if (!req.file) {
-            return res.status(400).json({ success: false, error: "Image file is required" });
+        // Agar user ne koi image upload nahi ki
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ success: false, message: "Kam az kam ek image zaroor upload karein." });
         }
 
-        // Memory buffer se Cloudinary par image upload karne ka behtareen tareeka:
-        cloudinary.uploader.upload_stream({ folder: "zaib_collection" }, async (error, result) => {
-            if (error) {
-                console.error("Cloudinary Error:", error);
-                return res.status(500).json({ success: false, error: "Image upload failed" });
-            }
-
-            // Image URL milne ke baad database mein save karein
-            const newProduct = new Product({
-                title: req.body.title,
-                price: req.body.price,
-                description: req.body.description,
-                category: req.body.category,
-                imageUrl: result.secure_url // Cloudinary secure link
+        // 2. Saari images ko loop chala kar Cloudinary par upload karne ka tareeqa
+        const uploadPromises = req.files.map(file => {
+            return new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream(
+                    { folder: "zaib_collection_products" },
+                    (error, result) => {
+                        if (error) return reject(error);
+                        resolve(result.secure_url); // Upload hone ke baad image ka secure link milega
+                    }
+                );
+                stream.end(file.buffer); // Memory storage se buffer read karna
             });
+        });
 
-            await newProduct.save();
-            res.json({ success: true, message: "Product saved successfully!" });
-        }).end(req.file.buffer);
+        // Saari images upload hone ka intezar karein
+        const imageUrls = await Promise.all(uploadPromises);
 
-    } catch (err) {
-        console.error("Server Error:", err);
-        res.status(500).json({ success: false, error: err.message });
+        // 3. Database mein product save karein (imageUrls array save hoga)
+        const newProduct = new Product({
+            name: req.body.name,
+            category: req.body.category,
+            statusTag: req.body.statusTag,
+            price: req.body.price,
+            oldPrice: req.body.oldPrice || null,
+            details: req.body.details,
+            images: imageUrls // ✅ Ab yahan saari tasveeron ke links ka array save ho jayega!
+        });
+
+        await newProduct.save();
+        res.status(201).json({ success: true, message: "Product kamyabi se upload ho gaya hai!" });
+
+    } catch (error) {
+        console.error("Upload Error:", error);
+        res.status(500).json({ success: false, message: "Internal Server Error", error: error.message });
     }
 });
 
