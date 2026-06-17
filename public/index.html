@@ -70,7 +70,49 @@
                 <input type="text" id="cust-province" placeholder="Province" required>
                 <input type="text" id="cust-address" placeholder="Complete Home Address" required>
             </div>
-            <button class="btn-buy" onclick="placeOrder()">Confirm Order (COD)</button>
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+            <div class="payment-method-section">
+                <label style="display: block; font-weight: bold; margin-bottom: 12px; color: #333;">📌 Select Payment Method:</label>
+                <div class="payment-radio-group">
+                    <div class="payment-radio-item">
+                        <input type="radio" id="payment-cod" name="paymentMethod" value="cod" checked onchange="togglePaymentDetails()">
+                        <label for="payment-cod" class="payment-label">💵 Cash On Delivery (COD)</label>
+                    </div>
+                    <div class="payment-radio-item">
+                        <input type="radio" id="payment-advance" name="paymentMethod" value="advance" onchange="togglePaymentDetails()">
+                        <label for="payment-advance" class="payment-label">🏦 Advance Payment</label>
+                    </div>
+                </div>
+            </div>
+            <div id="payment-details-container" class="payment-details-container" style="display: none;">
+                <h4 style="margin-top: 0; color: #8b7355; font-size: 16px; margin-bottom: 15px;">💳 Payment Account Details</h4>
+                <div class="payment-account-box">
+                    <div class="account-header">Option 1: Easypaisa</div>
+                    <div class="account-detail">
+                        <span class="account-label">Account Title:</span>
+                        <span class="account-value">Shabana Yasmin</span>
+                    </div>
+                    <div class="account-detail">
+                        <span class="account-label">Account Number:</span>
+                        <span class="account-value account-number">03435305844</span>
+                    </div>
+                </div>
+                <div class="payment-account-box">
+                    <div class="account-header">Option 2: UBL Bank</div>
+                    <div class="account-detail">
+                        <span class="account-label">Account Title:</span>
+                        <span class="account-value">Sehar Zahid</span>
+                    </div>
+                    <div class="account-detail">
+                        <span class="account-label">IBAN Number:</span>
+                        <span class="account-value account-number">PK62UNIL0109000326746695</span>
+                    </div>
+                </div>
+                <div class="payment-info-note">
+                    <i class="fas fa-info-circle"></i> Please transfer the exact amount and reply with transaction receipt.
+                </div>
+            </div>
+            <button class="btn-buy" id="confirm-btn" onclick="placeOrder()">Confirm Order (COD)</button>
         </div>
         <footer>Contact: seharkhan2028@gmail.com | Since 2020</footer>
     </div>
@@ -330,6 +372,20 @@
             document.getElementById('rev-text').value = '';
         }
 
+        function togglePaymentDetails() {
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+            const paymentDetailsContainer = document.getElementById('payment-details-container');
+            const confirmBtn = document.getElementById('confirm-btn');
+            
+            if (paymentMethod === 'advance') {
+                paymentDetailsContainer.style.display = 'block';
+                confirmBtn.textContent = 'Confirm Order (Advance Payment)';
+            } else {
+                paymentDetailsContainer.style.display = 'none';
+                confirmBtn.textContent = 'Confirm Order (COD)';
+            }
+        }
+
         async function placeOrder() {
             const name = document.getElementById('cust-name').value;
             const phone = document.getElementById('cust-phone').value;
@@ -337,6 +393,7 @@
             const city = document.getElementById('cust-city').value;
             const province = document.getElementById('cust-province').value;
             const address = document.getElementById('cust-address').value;
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
 
             if (!name || !phone || !city || !province || !address) {
                 alert("Please fill all required fields before confirming order.");
@@ -348,7 +405,8 @@
 
             const orderData = {
                 name, phone, phone2, city, province, address,
-                cart, subtotal, delivery: DELIVERY_CHARGES, total
+                cart, subtotal, delivery: DELIVERY_CHARGES, total,
+                paymentMethod: paymentMethod
             };
 
             try {
@@ -371,6 +429,8 @@
                     document.getElementById('cust-city').value = '';
                     document.getElementById('cust-province').value = '';
                     document.getElementById('cust-address').value = '';
+                    document.getElementById('payment-cod').checked = true;
+                    togglePaymentDetails();
                 } else {
                     alert("Error: Order place nahi ho saka. " + result.message);
                 }

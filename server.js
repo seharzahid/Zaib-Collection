@@ -130,7 +130,7 @@ const transporter = nodemailer.createTransport({
 
 // 4. Checkout / Place Order API (Yeh customer ka data email par bhejta hai)
 app.post('/api/place-order', (req, res) => {
-    const { name, phone, phone2, city, province, address, cart, subtotal, delivery, total } = req.body;
+    const { name, phone, phone2, city, province, address, cart, subtotal, delivery, total, paymentMethod } = req.body;
 
     // Cart items ko email mein behtareen tareeqe se dekhane ke liye HTML list banana
     let cartItemsHTML = '';
@@ -138,11 +138,60 @@ app.post('/api/place-order', (req, res) => {
         cartItemsHTML += `<li><strong>${item}</strong> — Quantity: ${cart[item].quantity} | Price: Rs. ${cart[item].price * cart[item].quantity}</li>`;
     }
 
+    // Payment method ke liye custom message aur account details
+    let paymentMethodHTML = '';
+    let paymentStatus = 'Pending';
+    
+    if (paymentMethod === 'cod') {
+        paymentMethodHTML = `
+            <p style="background-color: #d1fae5; padding: 10px; border-radius: 6px; border-left: 4px solid #10b981;">
+                <strong style="color: #047857;">💵 Payment Method: Cash On Delivery (COD)</strong><br>
+                <span style="font-size: 13px; color: #047857;">Customer will pay at the time of delivery.</span>
+            </p>
+        `;
+        paymentStatus = 'Pending (COD)';
+    } else if (paymentMethod === 'advance') {
+        paymentMethodHTML = `
+            <p style="background-color: #fef3c7; padding: 10px; border-radius: 6px; border-left: 4px solid #f59e0b;">
+                <strong style="color: #92400e;">🏦 Payment Method: Advance Payment Required</strong><br>
+                <span style="font-size: 13px; color: #92400e;">Customer must transfer payment to one of the following accounts:</span>
+            </p>
+            <table style="width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13px;">
+                <tr style="background-color: #f3f4f6;">
+                    <td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Option 1: Easypaisa</td>
+                    <td style="padding: 8px; border: 1px solid #e5e7eb;"></td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: 600;">Account Title:</td>
+                    <td style="padding: 8px; border: 1px solid #e5e7eb;">Shabana Yasmin</td>
+                </tr>
+                <tr style="background-color: #f9fafb;">
+                    <td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: 600;">Account Number:</td>
+                    <td style="padding: 8px; border: 1px solid #e5e7eb; font-family: monospace;">03435305844</td>
+                </tr>
+                <tr style="background-color: #f3f4f6;">
+                    <td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Option 2: UBL Bank</td>
+                    <td style="padding: 8px; border: 1px solid #e5e7eb;"></td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: 600;">Account Title:</td>
+                    <td style="padding: 8px; border: 1px solid #e5e7eb;">Sehar Zahid</td>
+                </tr>
+                <tr style="background-color: #f9fafb;">
+                    <td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: 600;">IBAN Number:</td>
+                    <td style="padding: 8px; border: 1px solid #e5e7eb; font-family: monospace;">PK62UNIL0109000326746695</td>
+                </tr>
+            </table>
+            <p style="font-size: 12px; color: #6b7280; margin-top: 10px;">⚠️ <strong>Important:</strong> Customer should transfer the exact amount (Rs. ${total}) and provide transaction receipt for verification.</p>
+        `;
+        paymentStatus = 'Pending (Advance Payment)';
+    }
+
     // Email ka khoobsurat design aur structure
     const mailOptions = {
         from: 'seharkhan2028@gmail.com',
         to: 'seharkhan2028@gmail.com', // Aap ko khud hi apni email par order received hoga
-        subject: `🚨 New Order Received from ${name} (${city})`,
+        subject: `🚨 New Order Received from ${name} (${city}) - ${paymentMethod === 'cod' ? 'COD' : 'Advance Payment'}`,
         html: `
             <div style="font-family: sans-serif; border: 1px solid #8b7355; padding: 20px; border-radius: 8px; max-width: 600px;">
                 <h2 style="color: #8b7355; text-align: center; border-bottom: 2px solid #8b7355; padding-bottom: 10px;">Zaib Collection - New Order</h2>
@@ -165,7 +214,14 @@ app.post('/api/place-order', (req, res) => {
                 <h3>💰 Bill Breakdown:</h3>
                 <p><strong>Subtotal:</strong> Rs. ${subtotal}</p>
                 <p><strong>Delivery Charges:</strong> Rs. ${delivery}</p>
-                <h3 style="color: #b45309;">Total Payable (COD): Rs. ${total}</h3>
+                <h3 style="color: #b45309;">Total Payable: Rs. ${total}</h3>
+                
+                <hr style="border: 0; border-top: 1px solid #eee;">
+                
+                <h3>💳 Payment Details:</h3>
+                ${paymentMethodHTML}
+                
+                <hr style="border: 0; border-top: 1px solid #eee;">
                 
                 <p style="font-size: 12px; color: #777; text-align: center; margin-top: 30px;">Order generated live from your full-stack application.</p>
             </div>

@@ -108,3 +108,215 @@ footer { background-color: #1e293b; color: #94a3b8; text-align: center; padding:
     .review-inputs-row input, .review-inputs-row button { width: 100%; }
     .review-inputs-row { gap: 8px; }
 }
+
+/* ========== PAYMENT METHOD SECTION STYLES ========== */
+.payment-method-section {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+    border: 1px solid #e2e8f0;
+}
+
+.payment-radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.payment-radio-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    background-color: white;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.payment-radio-item:hover {
+    border-color: #8b7355;
+    background-color: #fffbf7;
+}
+
+.payment-radio-item input[type="radio"] {
+    margin-right: 12px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #8b7355;
+}
+
+.payment-label {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 500;
+    color: #333;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+/* ========== PAYMENT DETAILS CONTAINER ========== */
+.payment-details-container {
+    background-color: #fef5f1;
+    padding: 18px;
+    border-radius: 8px;
+    border: 1.5px solid #f4d6c6;
+    margin: 15px 0;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.payment-account-box {
+    background-color: white;
+    padding: 14px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    border-left: 4px solid #8b7355;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.payment-account-box:last-of-type {
+    margin-bottom: 0;
+}
+
+.account-header {
+    font-weight: 600;
+    color: #8b7355;
+    font-size: 14px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.account-detail {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    font-size: 13px;
+}
+
+.account-label {
+    font-weight: 600;
+    color: #475569;
+    min-width: 120px;
+}
+
+.account-value {
+    color: #1e293b;
+    font-weight: 500;
+    text-align: right;
+    word-break: break-word;
+}
+
+.account-number {
+    font-family: 'Courier New', monospace;
+    background-color: #f1f5f9;
+    padding: 4px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+}
+
+.payment-info-note {
+    background-color: #dbeafe;
+    color: #1e40af;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.payment-info-note i {
+    flex-shrink: 0;
+    font-size: 14px;
+}
+
+/* ========== MOBILE RESPONSIVENESS FOR PAYMENT SECTION ========== */
+@media (max-width: 600px) {
+    .payment-method-section {
+        padding: 12px;
+        margin: 12px 0;
+    }
+
+    .payment-radio-item {
+        padding: 8px 10px;
+    }
+
+    .payment-radio-item input[type="radio"] {
+        margin-right: 10px;
+        width: 16px;
+        height: 16px;
+    }
+
+    .payment-label {
+        font-size: 14px;
+    }
+
+    .payment-details-container {
+        padding: 14px;
+        margin: 12px 0;
+        border-radius: 6px;
+    }
+
+    .payment-account-box {
+        padding: 12px;
+        margin-bottom: 10px;
+        border-left-width: 3px;
+    }
+
+    .account-header {
+        font-size: 13px;
+        margin-bottom: 8px;
+        padding-bottom: 6px;
+    }
+
+    .account-detail {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 6px 0;
+        gap: 4px;
+    }
+
+    .account-label {
+        min-width: auto;
+        margin-bottom: 2px;
+    }
+
+    .account-value {
+        text-align: left;
+        margin-left: 0;
+    }
+
+    .account-number {
+        width: 100%;
+        display: block;
+        padding: 6px;
+        font-size: 12px;
+    }
+
+    .payment-info-note {
+        padding: 8px 10px;
+        font-size: 11px;
+        gap: 6px;
+    }
+
+    .payment-info-note i {
+        font-size: 12px;
+    }
+}
