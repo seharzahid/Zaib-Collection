@@ -10,12 +10,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 // Cloudinary Setup
+// ✅ CLOUDINARY CONFIGURATION FOR VERCEL
 cloudinary.config({
-    cloud_name: 'dqg9fndlt',
-    api_key: '352585684257354',
-    api_secret: 'I_jJXwSnOZS39Iz_wkHZLfIv_lU' // Apka real secret yahan lagayein
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
 });
-
 // ====== MONGODB LIVE DATABASE CONNECTION ======
 const DB_URI = "mongodb+srv://seharkhan2028_db_user:qHl5SfLATd6q1H3e@cluster0.0nh3tgc.mongodb.net/zaib_collection?retryWrites=true&w=majority";
 
