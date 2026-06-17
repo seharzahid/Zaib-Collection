@@ -115,14 +115,24 @@
                         </p>`;
                 }
 
-                // Array ki pehli image nikalne ka logic
-                const firstImage = product.images && product.images.length > 0 ? product.images[0] : null;
+                // 🎯 FINAL FIX: Purana single link aur naya array dono ko check karne ka smart logic
+                let imageUrlToDisplay = 'placeholder.png'; // Default
+                
+                if (product.images && product.images.length > 0) {
+                    // Agar naya array hai (Jasmin naya push hone ke baad)
+                    imageUrlToDisplay = product.images[0];
+                } else if (product.imageUrl) {
+                    // Agar purana single field hai (Gulshen purana product)
+                    imageUrlToDisplay = product.imageUrl;
+                }
 
                 grid.innerHTML += `
                     <div class="product-card">
                         <div style="position:relative; cursor:pointer;" onclick="openDetailsPage(${index})">
                             ${tagHTML}
-                            ${firstImage ? `<img src="${firstImage}" alt="${product.name}">` : `<div class="product-img-placeholder">👗 No Image</div>`}
+                            ${imageUrlToDisplay !== 'placeholder.png' 
+                                ? `<img src="${imageUrlToDisplay}" alt="${product.name}">` 
+                                : `<div class="product-img-placeholder">👗 No Image</div>`}
                         </div>
                         <h4 onclick="openDetailsPage(${index})" style="cursor:pointer;">${product.name}</h4>
                         ${priceHTML}
