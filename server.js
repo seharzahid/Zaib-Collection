@@ -54,7 +54,9 @@ const productSchema = new mongoose.Schema({
     category: { type: String, required: true },
     statusTag: { type: String, default: "normal" },
     imageUrl: { type: String, default: "" },
-    allImages: [String]
+    allImages: [String],
+    colors: { type: [String], default: [] },
+    sizes: { type: [String], default: [] }
 });
 
 // Model banana
@@ -74,7 +76,9 @@ app.get('/api/products', async (req, res) => {
             category: p.category,
             statusTag: p.statusTag,
             imageUrl: p.imageUrl,
-            allImages: p.allImages
+            allImages: p.allImages,
+            colors: p.colors || [],
+            sizes: p.sizes || []
         }));
         res.json(formattedProducts);
     } catch (err) {
@@ -108,6 +112,18 @@ app.post('/api/products', upload.array('images', 5), async (req, res) => {
         // Saari images upload hone ka intezar karein
         const imageUrls = await Promise.all(uploadPromises);
 
+        const colors = typeof req.body.colors === 'string'
+            ? req.body.colors.split(',').map(c => c.trim()).filter(Boolean)
+            : Array.isArray(req.body.colors)
+                ? req.body.colors.map(c => String(c).trim()).filter(Boolean)
+                : [];
+
+        const sizes = typeof req.body.sizes === 'string'
+            ? req.body.sizes.split(',').map(s => s.trim()).filter(Boolean)
+            : Array.isArray(req.body.sizes)
+                ? req.body.sizes.map(s => String(s).trim()).filter(Boolean)
+                : [];
+
         // 3. Database mein product save karein (imageUrls array save hoga)
         const newProduct = new Product({
             name: req.body.name,
@@ -116,7 +132,10 @@ app.post('/api/products', upload.array('images', 5), async (req, res) => {
             price: req.body.price,
             oldPrice: req.body.oldPrice || null,
             details: req.body.details,
-            images: imageUrls // ✅ Ab yahan saari tasveeron ke links ka array save ho jayega!
+            colors,
+            sizes,
+            allImages: imageUrls,
+            imageUrl: imageUrls[0] || ""
         });
 
         await newProduct.save();
