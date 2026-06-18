@@ -18,7 +18,7 @@
         <!-- Add Product Form -->
         <div class="form-box">
             <h2>Add New Article</h2>
-            <form action="/api/products" method="POST" enctype="multipart/form-data">
+            <form id="productForm" action="/api/products" method="POST" enctype="multipart/form-data" onsubmit="handleProductFormSubmit(event)">
                 <input type="text" name="name" placeholder="Product Name" required>
                 <select name="category">
                     <option value="women">Women Collection</option>
@@ -26,7 +26,16 @@
                     <option value="kids">Kids Wear</option>
                     <option value="jewelry">Jewelry</option>
                 </select>
-                
+                <!-- Custom Variation Fields Added Manually -->
+                <div class="mb-4">
+                  <label class="block text-gray-700 text-sm font-bold mb-2" for="productColors">Available Colors</label>
+                  <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="productColors" name="colors" type="text" placeholder="e.g., Red, Blue, Black (comma separated)">
+                </div>
+
+                <div class="mb-4">
+                  <label class="block text-gray-700 text-sm font-bold mb-2" for="productSizes">Available Sizes</label>
+                  <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="productSizes" name="sizes" type="text" placeholder="e.g., S, M, L, XL (comma separated)">
+                </div>
                 <!-- Status Tags Selection -->
                 <select name="statusTag">
                     <option value="normal">Normal (No Tag)</option>
@@ -82,6 +91,30 @@
         console.error("Delete Error:", err);
     }
 }
+
+        async function handleProductFormSubmit(event) {
+            event.preventDefault();
+            const form = document.getElementById('productForm');
+            const formData = new FormData(form);
+            const colorsValue = document.getElementById('productColors').value.trim();
+            const sizesValue = document.getElementById('productSizes').value.trim();
+            if (colorsValue) formData.set('colors', colorsValue);
+            if (sizesValue) formData.set('sizes', sizesValue);
+
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            if (result.success) {
+                alert('Product uploaded successfully!');
+                form.reset();
+                fetchAdminProducts();
+            } else {
+                alert('Product upload failed: ' + (result.message || 'Please check your data.'));
+            }
+        }
+
         window.onload = fetchAdminProducts;
     </script>
 </body>
