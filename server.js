@@ -62,6 +62,17 @@ const productSchema = new mongoose.Schema({
 // Model banana
 const Product = mongoose.model('Product', productSchema);
 
+const reviewSchema = new mongoose.Schema({
+    productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
+    name: { type: String, required: true },
+    rating: { type: Number, required: true, min: 1, max: 5 },
+    comment: { type: String, default: '' },
+    createdAt: { type: Date, default: Date.now },
+    approved: { type: Boolean, default: true }
+});
+
+const Review = mongoose.model('Review', reviewSchema);
+
 // 1. Get All Products from MongoDB Live Database
 app.get('/api/products', async (req, res) => {
     try {
@@ -83,6 +94,61 @@ app.get('/api/products', async (req, res) => {
         res.json(formattedProducts);
     } catch (err) {
         res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/reviews', async (req, res) => {
+    try {
+        await connectToDatabase();
+        const { productId, name, rating, comment } = req.body;
+
+        if (!productId || !name || !rating) {
+            return res.status(400).json({ success: false, message: 'productId, name, and rating are required.' });
+        }
+
+        const numericRating = Number(rating);
+        if (Number.isNaN(numericRating) || numericRating < 1 || numericRating > 5) {
+            return res.status(400).json({ success: false, message: 'Rating must be a number between 1 and 5.' });
+        }
+
+        const review = new Review({
+            productId,
+            name: String(name).trim(),
+            rating: numericRating,
+            comment: comment ? String(comment).trim() : '',
+            createdAt: new Date(),
+            approved: true
+        });
+
+        await review.save();
+        res.status(201).json({ success: true, message: 'Review submitted successfully.' });
+    } catch (err) {
+        console.error('Review Save Error:', err);
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+app.get('/api/reviews/:productId', async (req, res) => {
+    try {
+        await connectToDatabase();
+        const { productId } = req.params;
+
+        if (!productId) {
+            return res.status(400).json({ success: false, message: 'Product ID is required.' });
+        }
+
+        const reviews = await Review.find({ productId, approved: true }).sort({ createdAt: -1 });
+        res.json(reviews.map(review => ({
+            id: review._id.toString(),
+            productId: review.productId.toString(),
+            name: review.name,
+            rating: review.rating,
+            comment: review.comment,
+            createdAt: review.createdAt
+        })));
+    } catch (err) {
+        console.error('Review Fetch Error:', err);
+        res.status(500).json({ success: false, message: err.message });
     }
 });
 

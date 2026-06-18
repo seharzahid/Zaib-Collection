@@ -25,10 +25,18 @@
                     <div class="reviews-section">
                         <h3>Customer Reviews</h3>
                         <div id="live-reviews-list">
-                            <p style="color:#777; font-size:14px;">★ ★ ★ ★ ★ - "Bohat pyaari quality hai, kapra naram hai."</p>
+                            <p style="color:#777; font-size:14px;">Loading reviews...</p>
                         </div>
                         <div class="review-inputs-row">
                             <input type="text" id="rev-name" placeholder="Your Name">
+                            <select id="rev-rating" style="padding:10px; border:1px solid #ccc; border-radius:6px;">
+                                <option value="">Rating</option>
+                                <option value="5">5 stars</option>
+                                <option value="4">4 stars</option>
+                                <option value="3">3 stars</option>
+                                <option value="2">2 stars</option>
+                                <option value="1">1 star</option>
+                            </select>
                             <input type="text" id="rev-text" placeholder="Write a review...">
                             <button onclick="submitReview()">Post Review</button>
                         </div>
@@ -132,6 +140,7 @@
     <script>
         let allProducts = []; 
         let cart = {}; 
+        let currentReviewProductId = null;
         const DELIVERY_CHARGES = 300;
         const productImageLists = {};
         const productImageIndices = {};
@@ -142,6 +151,38 @@
             const response = await fetch('/api/products');
             allProducts = await response.json();
             displayProducts(allProducts);
+        }
+
+        function renderReviews(reviews) {
+            const reviewsList = document.getElementById('live-reviews-list');
+            if (!reviewsList) return;
+            if (!Array.isArray(reviews) || reviews.length === 0) {
+                reviewsList.innerHTML = '<p style="color:#777; font-size:14px;">No reviews yet. Be the first to share your experience.</p>';
+                return;
+            }
+            reviewsList.innerHTML = reviews.map(review => `
+                <div style="margin-bottom: 12px; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; background:#fff;">
+                    <p style="margin:0 0 6px; font-weight:700; color:#333;">${review.name} <span style="font-size:13px; color:#b45309;">(${review.rating}★)</span></p>
+                    <p style="margin:0 0 6px; color:#555;">${review.comment}</p>
+                    <p style="margin:0; font-size:12px; color:#888;">${new Date(review.createdAt).toLocaleDateString()}</p>
+                </div>
+            `).join('');
+        }
+
+        async function loadReviews(productId) {
+            const reviewsList = document.getElementById('live-reviews-list');
+            if (reviewsList) reviewsList.innerHTML = '<p style="color:#777; font-size:14px;">Loading reviews...</p>';
+            try {
+                const response = await fetch(`/api/reviews/${productId}`);
+                if (!response.ok) {
+                    throw new Error('Failed to load reviews');
+                }
+                const reviews = await response.json();
+                renderReviews(reviews);
+            } catch (err) {
+                console.error('Review load error:', err);
+                if (reviewsList) reviewsList.innerHTML = '<p style="color:#777; font-size:14px;">Unable to load reviews at the moment.</p>';
+            }
         }
 
         function displayProducts(productsToRules) {
@@ -388,11 +429,55 @@
             
             document.getElementById('det-price-box').innerHTML = priceHTML;
 
+            currentReviewProductId = product.id;
+            loadReviews(product.id);
             document.getElementById('main-content-layout').style.display = 'block'; 
             document.getElementById('product-grid').style.display = 'none'; 
             document.getElementById('collection-title').style.display = 'none'; 
             document.getElementById('details-page-overlay').style.display = 'block'; 
             window.scrollTo(0,0);
+        }
+
+        async function submitReview() {
+            const name = document.getElementById('rev-name').value.trim();
+            const rating = document.getElementById('rev-rating').value;
+            const text = document.getElementById('rev-text').value.trim();
+
+            if (!currentReviewProductId) {
+                alert('Unable to identify the product for this review. Please reopen the details view and try again.');
+                return;
+            }
+            if (!name || !text || !rating) {
+                alert('Please enter your name, rating, and review message.');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/reviews', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        productId: currentReviewProductId,
+                        name,
+                        rating,
+                        comment: text
+                    })
+                });
+
+                const result = await response.json();
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Review could not be submitted.');
+                }
+
+                document.getElementById('rev-name').value = '';
+                document.getElementById('rev-rating').value = '';
+                document.getElementById('rev-text').value = '';
+                await loadReviews(currentReviewProductId);
+                alert('Thank you! Your review has been posted.');
+            } catch (err) {
+                console.error('Review submit error:', err);
+                alert('Unable to submit review right now. Please try again later.');
+            }
         }
 
         function closeDetailsPage() {
