@@ -17,14 +17,36 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 // ====== MONGODB LIVE DATABASE CONNECTION ======
-const DB_URI = "mongodb+srv://seharkhan2028_db_user:qHl5SfLATd6q1H3e@cluster0.0nh3tgc.mongodb.net/zaib_collection?retryWrites=true&w=majority";
+const DB_URI = process.env.MONGODB_URI || "mongodb+srv://seharkhan2028_db_user:qHl5SfLATd6q1H3e@cluster0.0nh3tgc.mongodb.net/zaib_collection?retryWrites=true&w=majority";
 
-mongoose.connect(DB_URI)
-    .then(() => console.log("🚀 MongoDB Cloud Database Connected Successfully!"))
-    .catch(err => {
-        console.error("❌ Database Connection Error:", err);
-        // Agar cloud database connect na ho sake toh crash hone ke bajaye error logs mein show ho
-    });
+const globalCache = global.mongoCache || { conn: null, promise: null };
+global.mongoCache = globalCache;
+
+async function connectToDatabase() {
+    if (globalCache.conn && mongoose.connection.readyState === 1) {
+        return globalCache.conn;
+    }
+
+    if (!globalCache.promise) {
+        globalCache.promise = mongoose.connect(DB_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            serverSelectionTimeoutMS: 10000,
+            socketTimeoutMS: 45000
+        }).then(mongooseInstance => {
+            globalCache.conn = mongooseInstance;
+            console.log("🚀 MongoDB Cloud Database Connected Successfully!");
+            return mongooseInstance;
+        }).catch(err => {
+            globalCache.promise = null;
+            console.error("❌ Database Connection Error:", err);
+            throw err;
+        });
+    }
+
+    return globalCache.promise;
+}
+
 // MongoDB Schema (Tijoori ka structure ke data kaise save hoga)
 const productSchema = new mongoose.Schema({
     name: { type: String, required: true },
@@ -43,6 +65,7 @@ const Product = mongoose.model('Product', productSchema);
 // 1. Get All Products from MongoDB Live Database
 app.get('/api/products', async (req, res) => {
     try {
+        await connectToDatabase();
         const products = await Product.find({});
         const formattedProducts = products.map(p => ({
             id: p._id.toString(),
@@ -64,6 +87,7 @@ app.get('/api/products', async (req, res) => {
 // 1. Multer ko batayein ke 'images' ke naam se maximum 5 files accept karey
 app.post('/api/products', upload.array('images', 5), async (req, res) => {
     try {
+        await connectToDatabase();
         // Agar user ne koi image upload nahi ki
         if (!req.files || req.files.length === 0) {
             return res.status(400).json({ success: false, message: "Kam az kam ek image zaroor upload karein." });
@@ -109,6 +133,7 @@ app.post('/api/products', upload.array('images', 5), async (req, res) => {
 // 3. Delete Product from MongoDB permanent
 app.delete('/api/products/:id', async (req, res) => {
     try {
+        await connectToDatabase();
         const { id } = req.params;
         await Product.findByIdAndDelete(id); 
         res.json({ success: true, message: "Product deleted from database successfully" });
