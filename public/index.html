@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zaib Collection</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -36,7 +40,15 @@
 
     <div id="main-content-layout">
         <header class="navbar">
-            <div class="logo" onclick="filterProducts('all')" style="cursor: pointer;">Zaib Collection</div>
+            <div class="flex items-center gap-3 cursor-pointer" onclick="filterProducts('all')">
+                <div class="flex items-center justify-center w-12 h-12 rounded-full border border-white/20 bg-white/10 shadow-sm shadow-black/10">
+                    <span class="text-xl font-semibold uppercase tracking-[0.24em] text-white" style="font-family: 'Playfair Display', serif;">Z</span>
+                </div>
+                <div class="flex flex-col leading-tight">
+                    <span class="text-xl font-semibold text-white" style="font-family: 'Playfair Display', serif;">Zaib Collection</span>
+                    <span class="text-xs uppercase tracking-[0.32em] text-white/70" style="font-family: 'Playfair Display', serif;">Luxury</span>
+                </div>
+            </div>
             <nav>
                 <a href="#" onclick="filterProducts('all')">All</a>
                 <a href="#" onclick="filterProducts('women')">Women</a>
@@ -168,6 +180,9 @@
 
                 const hasMultipleImages = imageList.length > 1;
                 const initialImgSrc = imageList[0] || '';
+                const hasVariants = (Array.isArray(product.colors) && product.colors.length > 0) || (Array.isArray(product.sizes) && product.sizes.length > 0);
+                const addToCartAction = hasVariants ? `openDetailsPage(${index})` : `addToCart('${index}', '${pId}')`;
+                const buyNowAction = hasVariants ? `openDetailsPage(${index})` : `buyNow('${index}', '${pId}')`;
 
                 grid.innerHTML += `
                     <div class="product-card">
@@ -188,8 +203,8 @@
                             <button onclick="changeQtyValue('${pId}', 1)">+</button>
                         </div>
                         <div class="card-buttons-row">
-                            <button class="btn-secondary" onclick="addToCart('${index}', '${pId}')" ${product.statusTag === 'soldout' ? 'disabled style="background:#ccc;"' : ''}>Add to Cart</button>
-                            <button class="btn-primary" onclick="buyNow('${index}', '${pId}')" ${product.statusTag === 'soldout' ? 'disabled style="background:#ccc;"' : ''}>Buy Now</button>
+                            <button class="btn-secondary" onclick="${addToCartAction}" ${product.statusTag === 'soldout' ? 'disabled style="background:#ccc;"' : ''}>${hasVariants ? 'Select Options' : 'Add to Cart'}</button>
+                            <button class="btn-primary" onclick="${buyNowAction}" ${product.statusTag === 'soldout' ? 'disabled style="background:#ccc;"' : ''}>${hasVariants ? 'Select Options' : 'Buy Now'}</button>
                         </div>
                     </div>
                 `;
@@ -235,11 +250,28 @@
             qtyElement.innerText = currentQty;
         }
 
+        function cartItemKey(product, color, size) {
+            const safeColor = color ? color.trim() : 'default';
+            const safeSize = size ? size.trim() : 'default';
+            return `${product.id}::${safeColor}::${safeSize}`;
+        }
+
+        function getDetailVariants() {
+            return {
+                color: document.getElementById('det-color-select') ? document.getElementById('det-color-select').value : null,
+                size: document.getElementById('det-size-select') ? document.getElementById('det-size-select').value : null
+            };
+        }
+
         function addToCart(index, pId) {
             const product = allProducts[index];
             const qtySelected = parseInt(document.getElementById(`qty-${pId}`).innerText);
-            if (cart[product.name]) { cart[product.name].quantity += qtySelected; } 
-            else { cart[product.name] = { price: parseInt(product.price), quantity: qtySelected }; }
+            const key = cartItemKey(product, null, null);
+            if (cart[key]) {
+                cart[key].quantity += qtySelected;
+            } else {
+                cart[key] = { productId: product.id, name: product.name, price: parseInt(product.price), quantity: qtySelected, color: null, size: null };
+            }
             updateCartUI();
             alert("Added to cart!");
             document.getElementById(`qty-${pId}`).innerText = 1;
@@ -248,7 +280,9 @@
         function buyNow(index, pId) {
             const product = allProducts[index];
             const qtySelected = parseInt(document.getElementById(`qty-${pId}`).innerText);
-            cart[product.name] = { price: parseInt(product.price), quantity: qtySelected };
+            const key = cartItemKey(product, null, null);
+            cart = {};
+            cart[key] = { productId: product.id, name: product.name, price: parseInt(product.price), quantity: qtySelected, color: null, size: null };
             updateCartUI();
             scrollToCheckout();
         }
@@ -257,10 +291,12 @@
             let totalItems = 0, subtotal = 0;
             const summaryList = document.getElementById('cart-summary-list');
             summaryList.innerHTML = '';
-            for (const name in cart) {
-                totalItems += cart[name].quantity;
-                subtotal += (cart[name].price * cart[name].quantity);
-                summaryList.innerHTML += `<div class="cart-summary-item"><span><strong>${name}</strong> (x${cart[name].quantity})</span><span>Rs. ${cart[name].price * cart[name].quantity}</span></div>`;
+            for (const key in cart) {
+                const item = cart[key];
+                totalItems += item.quantity;
+                subtotal += (item.price * item.quantity);
+                const variants = [item.color, item.size].filter(Boolean).join(' | ');
+                summaryList.innerHTML += `<div class="cart-summary-item"><span><strong>${item.name}</strong>${variants ? ` - ${variants}` : ''} (x${item.quantity})</span><span>Rs. ${item.price * item.quantity}</span></div>`;
             }
             document.getElementById('cart-count').innerText = totalItems;
             document.getElementById('bill-subtotal').innerText = `Rs. ${subtotal}`;
@@ -310,7 +346,34 @@
             if(product.statusTag === 'sale' && product.oldPrice) {
                 priceHTML = `<h3><span class="old-price-cut">Rs. ${product.oldPrice}</span> <span style="color:#b45309;">Rs. ${product.price}</span></h3>`;
             }
+
+            const colorOptions = Array.isArray(product.colors) && product.colors.length > 0 ? product.colors : [];
+            const sizeOptions = Array.isArray(product.sizes) && product.sizes.length > 0 ? product.sizes : [];
+            let variantSelectors = '';
+            if (colorOptions.length > 0) {
+                variantSelectors += `
+                    <div class="variant-selection-row" style="margin-top:18px;">
+                        <label for="det-color-select">Choose Color</label>
+                        <select id="det-color-select" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px; margin-top:8px;">
+                            <option value="">Select Color</option>
+                            ${colorOptions.map(color => `<option value="${color}">${color}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+            }
+            if (sizeOptions.length > 0) {
+                variantSelectors += `
+                    <div class="variant-selection-row" style="margin-top:18px;">
+                        <label for="det-size-select">Choose Size</label>
+                        <select id="det-size-select" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px; margin-top:8px;">
+                            <option value="">Select Size</option>
+                            ${sizeOptions.map(size => `<option value="${size}">${size}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+            }
             
+            priceHTML += variantSelectors;
             priceHTML += `
                 <div class="quantity-selector" style="justify-content: flex-start; margin: 20px 0;">
                     <button onclick="changeQtyValue('${pId}-det', -1)">-</button>
@@ -338,14 +401,34 @@
             document.getElementById('collection-title').style.display = 'block'; 
         }
 
+        function validateVariantSelection(index) {
+            const product = allProducts[index];
+            const { color, size } = getDetailVariants();
+            const hasColor = Array.isArray(product.colors) && product.colors.length > 0;
+            const hasSize = Array.isArray(product.sizes) && product.sizes.length > 0;
+
+            if (hasColor && !color) {
+                alert('Please choose a color before adding to cart.');
+                return false;
+            }
+            if (hasSize && !size) {
+                alert('Please choose a size before adding to cart.');
+                return false;
+            }
+            return true;
+        }
+
         function addToCartFromDetails(index, detailPId) {
             const product = allProducts[index];
+            if (!validateVariantSelection(index)) return;
+            const { color, size } = getDetailVariants();
             const qtySelected = parseInt(document.getElementById(`qty-${detailPId}`).innerText);
-            
-            if (cart[product.name]) { 
-                cart[product.name].quantity += qtySelected; 
-            } else { 
-                cart[product.name] = { price: parseInt(product.price), quantity: qtySelected }; 
+            const key = cartItemKey(product, color, size);
+
+            if (cart[key]) {
+                cart[key].quantity += qtySelected;
+            } else {
+                cart[key] = { productId: product.id, name: product.name, price: parseInt(product.price), quantity: qtySelected, color: color || null, size: size || null };
             }
             updateCartUI();
             alert(`${qtySelected} x ${product.name} added to cart!`);
@@ -354,11 +437,14 @@
 
         function buyNowFromDetails(index, detailPId) {
             const product = allProducts[index];
+            if (!validateVariantSelection(index)) return;
+            const { color, size } = getDetailVariants();
             const qtySelected = parseInt(document.getElementById(`qty-${detailPId}`).innerText);
-            
-            cart[product.name] = { price: parseInt(product.price), quantity: qtySelected };
+            const key = cartItemKey(product, color, size);
+
+            cart = {};
+            cart[key] = { productId: product.id, name: product.name, price: parseInt(product.price), quantity: qtySelected, color: color || null, size: size || null };
             updateCartUI();
-            
             closeDetailsPage();
             scrollToCheckout();
         }
