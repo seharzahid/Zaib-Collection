@@ -73,24 +73,30 @@
         <div id="hero-slider" class="w-full overflow-hidden relative" style="margin-top:18px;">
             <div id="hero-track" class="flex w-[300%] transition-transform duration-700">
                 <div class="w-full flex-shrink-0 relative hero-slide">
-                    <img src="https://images.unsplash.com/photo-1621184455862-c163dfb30e0f?q=80&w=1200" alt="Slide 1" class="w-full h-72 md:h-96 object-cover">
+                    <img src="https://images.unsplash.com/photo-1605763363321-df62886f4a21?q=80&w=1200" alt="Slide 1" class="w-full h-72 md:h-96 object-contain bg-black/10">
                     <div class="absolute inset-0 bg-black/40"></div>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <h2 class="hero-text text-2xl md:text-4xl lg:text-5xl font-extrabold text-white opacity-0 translate-y-4 transition-all duration-700">Welcome to Zaib Collection</h2>
+                    <div class="absolute inset-0 flex items-center justify-center px-4 text-center">
+                        <div class="bg-black/30 px-4 py-3 rounded-md">
+                            <h2 class="hero-text text-2xl md:text-4xl lg:text-5xl font-extrabold text-white opacity-0 translate-y-4 transition-all duration-700">Welcome to Zaib Collection</h2>
+                        </div>
                     </div>
                 </div>
                 <div class="w-full flex-shrink-0 relative hero-slide">
-                    <img src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=1200" alt="Slide 2" class="w-full h-72 md:h-96 object-cover">
+                    <img src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=1200" alt="Slide 2" class="w-full h-72 md:h-96 object-contain bg-black/10">
                     <div class="absolute inset-0 bg-black/40"></div>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <h2 class="hero-text text-2xl md:text-4xl lg:text-5xl font-extrabold text-white opacity-0 translate-y-4 transition-all duration-700">Scroll Down to watch our latest collection</h2>
+                    <div class="absolute inset-0 flex items-center justify-center px-4 text-center">
+                        <div class="bg-black/30 px-4 py-3 rounded-md">
+                            <h2 class="hero-text text-2xl md:text-4xl lg:text-5xl font-extrabold text-white opacity-0 translate-y-4 transition-all duration-700">Scroll Down to watch our latest collection</h2>
+                        </div>
                     </div>
                 </div>
                 <div class="w-full flex-shrink-0 relative hero-slide">
-                    <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=1200" alt="Slide 3" class="w-full h-72 md:h-96 object-cover">
+                    <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=1200" alt="Slide 3" class="w-full h-72 md:h-96 object-contain bg-black/10">
                     <div class="absolute inset-0 bg-black/40"></div>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <h2 class="hero-text text-2xl md:text-4xl lg:text-5xl font-extrabold text-white opacity-0 translate-y-4 transition-all duration-700">Happy Shopping</h2>
+                    <div class="absolute inset-0 flex items-center justify-center px-4 text-center">
+                        <div class="bg-black/30 px-4 py-3 rounded-md">
+                            <h2 class="hero-text text-2xl md:text-4xl lg:text-5xl font-extrabold text-white opacity-0 translate-y-4 transition-all duration-700">Happy Shopping</h2>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -663,11 +669,11 @@
                 });
             }
             show(0);
-            let heroInterval = setInterval(() => { idx = (idx + 1) % slides.length; show(idx); }, 5000);
+            let heroInterval = setInterval(() => { idx = (idx + 1) % slides.length; show(idx); }, 2000);
             const sliderEl = document.getElementById('hero-slider');
             if (sliderEl) {
                 sliderEl.addEventListener('mouseenter', () => clearInterval(heroInterval));
-                sliderEl.addEventListener('mouseleave', () => { heroInterval = setInterval(() => { idx = (idx + 1) % slides.length; show(idx); }, 5000); });
+                sliderEl.addEventListener('mouseleave', () => { heroInterval = setInterval(() => { idx = (idx + 1) % slides.length; show(idx); }, 2000); });
             }
             window.onload = loadProducts;
         })();
