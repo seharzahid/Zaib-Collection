@@ -534,14 +534,7 @@
             scrollToCheckout();
         }
 
-        function submitReview() {
-            const name = document.getElementById('rev-name').value;
-            const text = document.getElementById('rev-text').value;
-            if(!name || !text) return;
-            document.getElementById('live-reviews-list').innerHTML += `<p style="color:#333; font-size:14px;"><strong>${name}</strong>: "${text}"</p>`;
-            document.getElementById('rev-name').value = '';
-            document.getElementById('rev-text').value = '';
-        }
+        
 
         function togglePaymentDetails() {
             const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
