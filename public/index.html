@@ -222,6 +222,7 @@
                 const hasMultipleImages = imageList.length > 1;
                 const initialImgSrc = imageList[0] || '';
                 const hasVariants = (Array.isArray(product.colors) && product.colors.length > 0) || (Array.isArray(product.sizes) && product.sizes.length > 0);
+                const isSoldOut = String(product.statusTag || '').toLowerCase() === 'soldout';
                 const addToCartAction = hasVariants ? `openDetailsPage(${index})` : `addToCart('${index}', '${pId}')`;
                 const buyNowAction = hasVariants ? `openDetailsPage(${index})` : `buyNow('${index}', '${pId}')`;
 
@@ -244,8 +245,8 @@
                             <button onclick="changeQtyValue('${pId}', 1)">+</button>
                         </div>
                         <div class="card-buttons-row">
-                            <button class="btn-secondary" onclick="${addToCartAction}" ${product.statusTag === 'soldout' ? 'disabled style="background:#ccc;"' : ''}>${hasVariants ? 'Select Options' : 'Add to Cart'}</button>
-                            <button class="btn-primary" onclick="${buyNowAction}" ${product.statusTag === 'soldout' ? 'disabled style="background:#ccc;"' : ''}>${hasVariants ? 'Select Options' : 'Buy Now'}</button>
+                            <button class="btn-secondary" onclick="${addToCartAction}" ${isSoldOut ? 'disabled style="background:#ccc;"' : ''}>${hasVariants ? 'Select Options' : 'Add to Cart'}</button>
+                            <button class="btn-primary" onclick="${buyNowAction}" ${isSoldOut ? 'disabled style="background:#ccc;"' : ''}>${hasVariants ? 'Select Options' : 'Buy Now'}</button>
                         </div>
                     </div>
                 `;
@@ -416,16 +417,18 @@
                 `;
             }
             
+            const isSoldOut = String(product.statusTag || '').toLowerCase() === 'soldout';
+
             priceHTML += variantSelectors;
-            priceHTML += `
-                <div class="quantity-selector" style="justify-content: flex-start; margin: 20px 0;">
-                    <button onclick="changeQtyValue('${pId}-det', -1)">-</button>
-                    <span id="qty-${pId}-det">1</span>
-                    <button onclick="changeQtyValue('${pId}-det', 1)">+</button>
-                </div>
-                <div class="card-buttons-row" style="max-width: 300px;">
-                    <button class="btn-secondary" onclick="addToCartFromDetails('${index}', '${pId}-det')" ${product.statusTag === 'soldout' ? 'disabled style="background:#ccc;"' : ''}>Add to Cart</button>
-                    <button class="btn-primary" onclick="buyNowFromDetails('${index}', '${pId}-det')" ${product.statusTag === 'soldout' ? 'disabled style="background:#ccc;"' : ''}>Buy Now</button>
+                priceHTML += `
+                    <div class="quantity-selector" style="justify-content: flex-start; margin: 20px 0;">
+                        <button onclick="changeQtyValue('${pId}-det', -1)">-</button>
+                        <span id="qty-${pId}-det">1</span>
+                        <button onclick="changeQtyValue('${pId}-det', 1)">+</button>
+                    </div>
+                    <div class="card-buttons-row" style="max-width: 300px;">
+                        <button class="btn-secondary" onclick="addToCartFromDetails('${index}', '${pId}-det')" ${isSoldOut ? 'disabled style="background:#ccc;"' : ''}>Add to Cart</button>
+                        <button class="btn-primary" onclick="buyNowFromDetails('${index}', '${pId}-det')" ${isSoldOut ? 'disabled style="background:#ccc;"' : ''}>Buy Now</button>
                 </div>
             `;
             
