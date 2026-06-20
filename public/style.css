@@ -109,6 +109,21 @@ footer { background-color: #1e293b; color: #94a3b8; text-align: center; padding:
     .review-inputs-row { gap: 8px; }
 }
 
+.ticker-inner {
+    display: flex;
+    align-items: center;
+    min-width: 200%;
+}
+
+.animate-marquee {
+    animation: marquee 24s linear infinite;
+}
+
+@keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
 /* ========== PAYMENT METHOD SECTION STYLES ========== */
 .payment-method-section {
     background-color: #f8f9fa;
