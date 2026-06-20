@@ -10,19 +10,19 @@ body { background-color: #fcfbf9; font-family: 'Segoe UI', Tahoma, Geneva, Verda
 /* Grid Dynamic Configuration: Desktop 3-Columns, Tablet 2, Mobile 1 */
 .products-container { 
     display: grid; 
-    grid-template-columns: repeat(3, 1fr); 
-    gap: 30px; 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 24px; 
     padding: 30px 5%; 
     max-width: 1200px;
     margin: 0 auto;
     box-sizing: border-box;
 }
 
-@media (max-width: 992px) {
-    .products-container { grid-template-columns: repeat(2, 1fr); }
+@media (min-width: 1024px) {
+    .products-container { grid-template-columns: repeat(4, 1fr); }
 }
-@media (max-width: 600px) {
-    .products-container { grid-template-columns: 1fr; }
+@media (max-width: 640px) {
+    .products-container { grid-template-columns: repeat(2, 1fr); }
     .navbar { flex-direction: column; gap: 10px; text-align: center; }
 }
 
