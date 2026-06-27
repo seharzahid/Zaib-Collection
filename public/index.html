@@ -86,7 +86,7 @@
         <!-- Premium Professional Banner Frame -->
         <div class="w-full bg-[#fdfbf7] flex items-center justify-center overflow-hidden px-4 h-[380px] md:h-[480px]">
             <img src="./image/Slide4.png" alt="Zaib Collection Banner" class="max-w-full h-full object-contain mx-auto transition-transform duration-700 hover:scale-105" />
-        </div><br><br>
+        </div><br><br><br>
         <!--
   ====================================================
   ZAIB COLLECTION - Hero Slider
@@ -689,6 +689,11 @@
         function openDetailsPage(index) {
             const product = allProducts[index];
             const pId = product.name.replace(/\s+/g, '-').toLowerCase();
+
+            // Main content hide karo, sirf details dikhao
+            document.getElementById('main-content-layout').style.display = 'none';
+            document.getElementById('details-page-overlay').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
             
             document.getElementById('det-title').innerText = product.name;
             document.getElementById('det-description').innerText = product.details || "No additional parameters provided.";
@@ -825,8 +830,8 @@
 
         function closeDetailsPage() {
             document.getElementById('details-page-overlay').style.display = 'none';
-            document.getElementById('product-grid').style.display = 'grid'; 
-            document.getElementById('collection-title').style.display = 'block'; 
+            document.getElementById('main-content-layout').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function validateVariantSelection(index) {
