@@ -87,6 +87,295 @@
         <div class="w-full bg-[#fdfbf7] flex items-center justify-center overflow-hidden px-4 h-[380px] md:h-[480px]">
             <img src="./image/Slide4.png" alt="Zaib Collection Banner" class="max-w-full h-full object-contain mx-auto transition-transform duration-700 hover:scale-105" />
         </div>
+        <!--
+  ====================================================
+  ZAIB COLLECTION - Hero Slider
+  Apni index.html mein <body> ke andar paste karein
+  slide1.jpg, slide2.jpg, slide3.jpg apne images/ folder se use hogi
+  ====================================================
+-->
+
+<style>
+/* ===== SLIDER CSS ===== */
+.hero-slider-wrap {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+.hero-slider-track {
+  display: flex;
+  transition: transform 0.75s cubic-bezier(0.77, 0, 0.18, 1);
+  will-change: transform;
+}
+
+.hero-slide {
+  min-width: 100%;
+  flex-shrink: 0;
+  position: relative;
+  aspect-ratio: 16 / 6;
+  overflow: hidden;
+}
+
+/* ✅ KEY FIX: object-fit:cover — no zoom, perfect fit on mobile & desktop */
+.hero-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+
+.hero-slide-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0.15) 55%,
+    transparent 100%
+  );
+  display: flex;
+  align-items: center;
+  padding: 0 6%;
+}
+
+.hero-slide-text .badge {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #e8c97a;
+  margin-bottom: 10px;
+}
+
+.hero-slide-text h2 {
+  color: #fff;
+  font-size: clamp(1.3rem, 3.5vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 8px;
+}
+
+.hero-slide-text p {
+  color: rgba(255,255,255,0.85);
+  font-size: clamp(0.75rem, 1.6vw, 1rem);
+  margin: 0 0 20px;
+}
+
+.hero-slide-text .slide-btn {
+  background: #e8c97a;
+  color: #111;
+  border: none;
+  padding: 10px 26px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.hero-slide-text .slide-btn:hover {
+  background: #d4b45e;
+}
+
+/* Arrows */
+.slider-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: background 0.2s;
+  user-select: none;
+}
+
+.slider-arrow:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+.slider-arrow.prev { left: 16px; }
+.slider-arrow.next { right: 16px; }
+
+/* Dots */
+.slider-dots {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+}
+
+.slider-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.slider-dot.active {
+  background: #e8c97a;
+  transform: scale(1.35);
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  .hero-slide {
+    aspect-ratio: 4 / 3;
+  }
+
+  .hero-slide img {
+    object-position: center;
+  }
+
+  .slider-arrow {
+    width: 34px;
+    height: 34px;
+    font-size: 16px;
+  }
+}
+</style>
+
+
+<!-- ===== SLIDER HTML ===== -->
+<section class="hero-slider-wrap" id="heroSlider">
+
+  <div class="hero-slider-track" id="heroTrack">
+
+    <!-- Slide 1 -->
+    <div class="hero-slide">
+      <img src="image/Slide1.webp" alt="New Collection" loading="eager" />
+      <div class="hero-slide-overlay">
+        <div class="hero-slide-text">
+          <span class="badge">New Arrival</span>
+          <h2>Elegant Winter<br>Collection 2025</h2>
+          <p>Premium fabrics, timeless style</p>
+          <button class="slide-btn" onclick="location.href='#collection'">Shop Now</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="hero-slide">
+      <img src="image/Slide2.webp" alt="Lawn Collection" loading="lazy" />
+      <div class="hero-slide-overlay">
+        <div class="hero-slide-text">
+          <span class="badge">Best Sellers</span>
+          <h2>Luxury Lawn<br>&amp; Chiffon Suits</h2>
+          <p>Unstitched &amp; ready-to-wear</p>
+          <button class="slide-btn" onclick="location.href='#collection'">Explore</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="hero-slide">
+      <img src="image/Slide3.webp" alt="Festive Sale" loading="lazy" />
+      <div class="hero-slide-overlay">
+        <div class="hero-slide-text">
+          <span class="badge">Special Offer</span>
+          <h2>Festive Sale<br>Up to 40% Off</h2>
+          <p>Limited time deals on all categories</p>
+          <button class="slide-btn" onclick="location.href='#collection'">View Deals</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /track -->
+
+  <!-- Navigation Arrows -->
+  <button class="slider-arrow prev" id="sliderPrev" aria-label="Previous slide">&#8592;</button>
+  <button class="slider-arrow next" id="sliderNext" aria-label="Next slide">&#8594;</button>
+
+  <!-- Dots -->
+  <div class="slider-dots" id="sliderDots">
+    <button class="slider-dot active" data-slide="0" aria-label="Slide 1"></button>
+    <button class="slider-dot" data-slide="1" aria-label="Slide 2"></button>
+    <button class="slider-dot" data-slide="2" aria-label="Slide 3"></button>
+  </div>
+
+</section><!-- /slider -->
+
+
+<!-- ===== SLIDER JS ===== -->
+<script>
+(function () {
+  const track   = document.getElementById('heroTrack');
+  const dots    = document.querySelectorAll('.slider-dot');
+  const total   = document.querySelectorAll('.hero-slide').length;
+  let current   = 0;
+  let timer;
+
+  function goTo(n) {
+    current = ((n % total) + total) % total;
+    track.style.transform = 'translateX(-' + (current * 100) + '%)';
+    dots.forEach(function (d, i) {
+      d.classList.toggle('active', i === current);
+    });
+  }
+
+  function startAuto() {
+    clearInterval(timer);
+    timer = setInterval(function () { goTo(current + 1); }, 4500);
+  }
+
+  // Arrow clicks
+  document.getElementById('sliderPrev').addEventListener('click', function () {
+    goTo(current - 1);
+    startAuto();
+  });
+  document.getElementById('sliderNext').addEventListener('click', function () {
+    goTo(current + 1);
+    startAuto();
+  });
+
+  // Dot clicks
+  dots.forEach(function (d) {
+    d.addEventListener('click', function () {
+      goTo(parseInt(d.dataset.slide));
+      startAuto();
+    });
+  });
+
+  // Touch swipe support (mobile)
+  var touchStartX = 0;
+  var sliderEl = document.getElementById('heroSlider');
+
+  sliderEl.addEventListener('touchstart', function (e) {
+    touchStartX = e.touches[0].clientX;
+  }, { passive: true });
+
+  sliderEl.addEventListener('touchend', function (e) {
+    var diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) {
+      goTo(diff > 0 ? current + 1 : current - 1);
+      startAuto();
+    }
+  }, { passive: true });
+
+  // Start auto-play
+  startAuto();
+})();
+</script>
 
         <h2 id="collection-title" style="text-align: center; margin-top: 30px; color: #8b7355;">Our Latest Collection</h2>
         <div id="product-grid" class="products-container"></div>
