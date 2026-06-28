@@ -819,11 +819,10 @@
 
             currentReviewProductId = product.id;
             loadReviews(product.id);
-            document.getElementById('main-content-layout').style.display = 'block'; 
-            document.getElementById('product-grid').style.display = 'none'; 
-            document.getElementById('collection-title').style.display = 'none'; 
-            document.getElementById('details-page-overlay').style.display = 'block'; 
-            window.scrollTo(0,0);
+            document.getElementById('main-content-layout').style.display = 'none';
+            document.getElementById('checkout-page-overlay').style.display = 'none';
+            document.getElementById('details-page-overlay').style.display = 'block';
+            window.scrollTo(0, 0);
         }
 
         async function submitReview() {
@@ -870,7 +869,13 @@
 
         function closeDetailsPage() {
             document.getElementById('details-page-overlay').style.display = 'none';
+            document.getElementById('checkout-page-overlay').style.display = 'none';
             document.getElementById('main-content-layout').style.display = 'block';
+            // product-grid aur collection-title wapas restore karo
+            const grid = document.getElementById('product-grid');
+            const title = document.getElementById('collection-title');
+            if (grid) grid.style.display = 'grid';
+            if (title) title.style.display = 'block';
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -993,7 +998,7 @@
         }
 
         function openCheckoutPage() {
-            updateCart();
+            updateCartUI();
             document.getElementById('main-content-layout').style.display = 'none';
             document.getElementById('details-page-overlay').style.display = 'none';
             document.getElementById('checkout-page-overlay').style.display = 'block';
@@ -1003,6 +1008,10 @@
         function closeCheckoutPage() {
             document.getElementById('checkout-page-overlay').style.display = 'none';
             document.getElementById('main-content-layout').style.display = 'block';
+            const grid = document.getElementById('product-grid');
+            const title = document.getElementById('collection-title');
+            if (grid) grid.style.display = 'grid';
+            if (title) title.style.display = 'block';
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
         
