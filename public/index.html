@@ -464,7 +464,6 @@
         async function loadProducts() {
             const grid = document.getElementById('product-grid');
 
-            // Skeleton placeholders — instant feedback while fetch runs
             grid.innerHTML = Array(6).fill(`
                 <div class="product-card" style="pointer-events:none;">
                     <div style="width:100%;aspect-ratio:3/4;border-radius:8px;background:linear-gradient(90deg,#f0ece6 25%,#e8e3dc 50%,#f0ece6 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;"></div>
@@ -473,12 +472,30 @@
                 </div>
             `).join('');
 
-            try {
-                const response = await fetch('/api/products');
-                allProducts = await response.json();
-                displayProducts(allProducts);
-            } catch(err) {
-                grid.innerHTML = '<p style="text-align:center;color:#888;padding:40px;">Products load nahi ho sake. Page refresh karein.</p>';
+            // 3 baar try karega — Vercel cold start handle karne ke liye
+            for (let attempt = 1; attempt <= 3; attempt++) {
+                try {
+                    const controller = new AbortController();
+                    const timeout = setTimeout(() => controller.abort(), 10000);
+                    const response = await fetch('/api/products', { signal: controller.signal });
+                    clearTimeout(timeout);
+                    if (!response.ok) throw new Error('HTTP ' + response.status);
+                    allProducts = await response.json();
+                    displayProducts(allProducts);
+                    return;
+                } catch(err) {
+                    if (attempt < 3) {
+                        await new Promise(r => setTimeout(r, 1500 * attempt));
+                    } else {
+                        grid.innerHTML = `
+                            <div style="text-align:center;padding:40px;grid-column:1/-1;">
+                                <p style="color:#888;margin-bottom:16px;">Products load nahi ho sake.</p>
+                                <button onclick="loadProducts()" style="background:#8b7355;color:white;border:none;padding:10px 24px;border-radius:6px;cursor:pointer;font-size:14px;font-weight:bold;">
+                                    Dobara Try Karein
+                                </button>
+                            </div>`;
+                    }
+                }
             }
         }
 
@@ -959,24 +976,8 @@
             else { displayProducts(allProducts.filter(p => p.category === category)); }
         }
         
-        // Hero slider behavior: auto-cycle slides every 5s and animate overlay text
-        (function(){
-            const track = document.getElementById('hero-track');
-            const slides = Array.from(document.querySelectorAll('.hero-slide'));
-            if (!track || slides.length === 0) { window.onload = loadProducts; return; }
-            let idx = 0;
-            function show(i){
-                track.style.transform = `translateX(-${i * 100}%)`;
-            }
-            show(0);
-            let heroInterval = setInterval(() => { idx = (idx + 1) % slides.length; show(idx); }, 5000);
-            const sliderEl = document.getElementById('hero-slider');
-            if (sliderEl) {
-                sliderEl.addEventListener('mouseenter', () => clearInterval(heroInterval));
-                sliderEl.addEventListener('mouseleave', () => { heroInterval = setInterval(() => { idx = (idx + 1) % slides.length; show(idx); }, 5000); });
-            }
-            document.addEventListener('DOMContentLoaded', loadProducts);
-        })();
+        // Products load karo — seedha call, koi conflict nahi
+        loadProducts();
     </script>
 </body>
 </html>
