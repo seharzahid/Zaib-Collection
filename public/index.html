@@ -63,7 +63,7 @@
                 <a href="#" onclick="filterProducts('men')">Men</a>
                 <a href="#" onclick="filterProducts('kids')">Kids</a>
                 <a href="#" onclick="filterProducts('jewelry')">Jewelry</a>
-                <a href="#" onclick="scrollToCheckout()" class="cart-nav">
+                <a href="#" onclick="openCheckoutPage()" class="cart-nav">
                     <i class="fas fa-shopping-cart"></i> Cart (<span id="cart-count">0</span>)
                 </a>
             </nav>
@@ -386,69 +386,94 @@
         <h2 id="collection-title" style="text-align: center; margin-top: 30px; color: #8b7355;">Our Latest Collection</h2>
         <div id="product-grid" class="products-container"></div>
 
-        <div id="checkout-section" class="checkout-box" style="display: none;">
-            <h3><i class="fas fa-shopping-bag"></i> Order Checkout</h3>
-            <div id="cart-summary-list"></div>
-            <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
-            <div class="price-calc-box">
-                <p>Subtotal: <span id="bill-subtotal">Rs. 0</span></p>
-                <p>Delivery Charges: <span id="bill-delivery">Rs. 300</span></p>
-                <h4 style="color: #8b7355; font-size: 18px; margin: 5px 0;">Total Bill: <span id="bill-total">Rs. 0</span></h4>
-            </div>
-            <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
-            <div class="form-group">
-                <input type="text" id="cust-name" placeholder="Full Name" required>
-                <input type="text" id="cust-phone" placeholder="Phone Number" required>
-                <input type="text" id="cust-phone2" placeholder="Additional Phone Number (Optional)">
-                <input type="text" id="cust-city" placeholder="City" required>
-                <input type="text" id="cust-province" placeholder="Province" required>
-                <input type="text" id="cust-address" placeholder="Complete Home Address" required>
-            </div>
-            <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
-            <div class="payment-method-section">
-                <label style="display: block; font-weight: bold; margin-bottom: 12px; color: #333;">📌 Select Payment Method:</label>
-                <div class="payment-radio-group">
-                    <div class="payment-radio-item">
-                        <input type="radio" id="payment-cod" name="paymentMethod" value="cod" checked onchange="togglePaymentDetails()">
-                        <label for="payment-cod" class="payment-label">💵 Cash On Delivery (COD)</label>
-                    </div>
-                    <div class="payment-radio-item">
-                        <input type="radio" id="payment-advance" name="paymentMethod" value="advance" onchange="togglePaymentDetails()">
-                        <label for="payment-advance" class="payment-label">🏦 Advance Payment</label>
-                    </div>
-                </div>
-            </div>
-            <div id="payment-details-container" class="payment-details-container" style="display: none;">
-                <h4 style="margin-top: 0; color: #8b7355; font-size: 16px; margin-bottom: 15px;">💳 Payment Account Details</h4>
-                <div class="payment-account-box">
-                    <div class="account-header">Option 1: Easypaisa</div>
-                    <div class="account-detail">
-                        <span class="account-label">Account Title:</span>
-                        <span class="account-value">Shabana Yasmin</span>
-                    </div>
-                    <div class="account-detail">
-                        <span class="account-label">Account Number:</span>
-                        <span class="account-value account-number">03435305844</span>
-                    </div>
-                </div>
-                <div class="payment-account-box">
-                    <div class="account-header">Option 2: UBL Bank</div>
-                    <div class="account-detail">
-                        <span class="account-label">Account Title:</span>
-                        <span class="account-value">Sehar Zahid</span>
-                    </div>
-                    <div class="account-detail">
-                        <span class="account-label">IBAN Number:</span>
-                        <span class="account-value account-number">PK62UNIL0109000326746695</span>
-                    </div>
-                </div>
-                <div class="payment-info-note">
-                    <i class="fas fa-info-circle"></i> Please transfer the exact amount and reply with transaction receipt.
-                </div>
-            </div>
-            <button class="btn-buy" id="confirm-btn" onclick="placeOrder()">Confirm Order (COD)</button>
-        </div>
         <footer>Contact: seharkhan2028@gmail.com | Since 2020</footer>
+    </div>
+
+    <!-- ===== CHECKOUT FULL PAGE OVERLAY ===== -->
+    <div id="checkout-page-overlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; overflow-y:auto; z-index:9999; background:#fcfbf9; box-sizing:border-box;">
+        <div style="max-width:600px; margin:0 auto; padding:20px; box-sizing:border-box;">
+            <!-- Header -->
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; padding-bottom:16px; border-bottom:2px solid #e2e8f0;">
+                <h2 style="margin:0; font-size:20px; color:#1e293b; display:flex; align-items:center; gap:10px;">
+                    <i class="fas fa-shopping-bag" style="color:#8b7355;"></i> Order Checkout
+                </h2>
+                <button onclick="closeCheckoutPage()" style="background:#64748b; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-size:13px; font-weight:600;">
+                    &times; Close
+                </button>
+            </div>
+
+            <!-- Cart Summary -->
+            <div style="background:white; border-radius:10px; border:1px solid #e2e8f0; padding:16px; margin-bottom:16px;">
+                <h4 style="margin:0 0 12px; font-size:15px; color:#475569;">🛒 Your Items</h4>
+                <div id="cart-summary-list"></div>
+                <hr style="border:0; border-top:1px dashed #e2e8f0; margin:12px 0;">
+                <div class="price-calc-box">
+                    <p>Subtotal: <span id="bill-subtotal">Rs. 0</span></p>
+                    <p>Delivery Charges: <span id="bill-delivery">Rs. 300</span></p>
+                    <h4 style="color:#8b7355; font-size:18px; margin:5px 0;">Total Bill: <span id="bill-total">Rs. 0</span></h4>
+                </div>
+            </div>
+
+            <!-- Customer Info -->
+            <div style="background:white; border-radius:10px; border:1px solid #e2e8f0; padding:16px; margin-bottom:16px;">
+                <h4 style="margin:0 0 14px; font-size:15px; color:#475569;">📋 Delivery Information</h4>
+                <div class="form-group">
+                    <input type="text" id="cust-name" placeholder="Full Name" required>
+                    <input type="text" id="cust-phone" placeholder="Phone Number" required>
+                    <input type="text" id="cust-phone2" placeholder="Additional Phone Number (Optional)">
+                    <input type="text" id="cust-city" placeholder="City" required>
+                    <input type="text" id="cust-province" placeholder="Province" required>
+                    <input type="text" id="cust-address" placeholder="Complete Home Address" required>
+                </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div style="background:white; border-radius:10px; border:1px solid #e2e8f0; padding:16px; margin-bottom:16px;">
+                <div class="payment-method-section" style="background:transparent; border:none; padding:0; margin:0;">
+                    <label style="display:block; font-weight:bold; margin-bottom:12px; color:#333;">📌 Select Payment Method:</label>
+                    <div class="payment-radio-group">
+                        <div class="payment-radio-item">
+                            <input type="radio" id="payment-cod" name="paymentMethod" value="cod" checked onchange="togglePaymentDetails()">
+                            <label for="payment-cod" class="payment-label">💵 Cash On Delivery (COD)</label>
+                        </div>
+                        <div class="payment-radio-item">
+                            <input type="radio" id="payment-advance" name="paymentMethod" value="advance" onchange="togglePaymentDetails()">
+                            <label for="payment-advance" class="payment-label">🏦 Advance Payment</label>
+                        </div>
+                    </div>
+                </div>
+                <div id="payment-details-container" class="payment-details-container" style="display:none; margin-top:14px;">
+                    <h4 style="margin-top:0; color:#8b7355; font-size:16px; margin-bottom:15px;">💳 Payment Account Details</h4>
+                    <div class="payment-account-box">
+                        <div class="account-header">Option 1: Easypaisa</div>
+                        <div class="account-detail">
+                            <span class="account-label">Account Title:</span>
+                            <span class="account-value">Shabana Yasmin</span>
+                        </div>
+                        <div class="account-detail">
+                            <span class="account-label">Account Number:</span>
+                            <span class="account-value account-number">03435305844</span>
+                        </div>
+                    </div>
+                    <div class="payment-account-box">
+                        <div class="account-header">Option 2: UBL Bank</div>
+                        <div class="account-detail">
+                            <span class="account-label">Account Title:</span>
+                            <span class="account-value">Sehar Zahid</span>
+                        </div>
+                        <div class="account-detail">
+                            <span class="account-label">IBAN Number:</span>
+                            <span class="account-value account-number">PK62UNIL0109000326746695</span>
+                        </div>
+                    </div>
+                    <div class="payment-info-note">
+                        <i class="fas fa-info-circle"></i> Please transfer the exact amount and reply with transaction receipt.
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-buy" id="confirm-btn" onclick="placeOrder()" style="margin-bottom:30px;">Confirm Order (COD)</button>
+        </div>
     </div>
 
     <script>
@@ -681,7 +706,7 @@
             cart = {};
             cart[key] = { productId: product.id, name: product.name, price: parseInt(product.price), quantity: qtySelected, color: null, size: null };
             updateCartUI();
-            scrollToCheckout();
+            openCheckoutPage();
         }
 
         function updateCartUI() {
@@ -697,10 +722,8 @@
             }
             document.getElementById('cart-count').innerText = totalItems;
             document.getElementById('bill-subtotal').innerText = `Rs. ${subtotal}`;
-            if (totalItems > 0) {
-                document.getElementById('checkout-section').style.display = 'block';
-                document.getElementById('bill-total').innerText = `Rs. ${subtotal + DELIVERY_CHARGES}`;
-            } else { document.getElementById('checkout-section').style.display = 'none'; }
+            document.getElementById('bill-total').innerText = `Rs. ${subtotal + DELIVERY_CHARGES}`;
+            // Cart count updated — checkout page opens when cart button is clicked
         }
 
         function openDetailsPage(index) {
@@ -896,7 +919,7 @@
             cart[key] = { productId: product.id, name: product.name, price: parseInt(product.price), quantity: qtySelected, color: color || null, size: size || null };
             updateCartUI();
             closeDetailsPage();
-            scrollToCheckout();
+            openCheckoutPage();
         }
 
         
@@ -969,7 +992,19 @@
             }
         }
 
-        function scrollToCheckout() { document.getElementById('checkout-section').scrollIntoView({ behavior: 'smooth' }); }
+        function openCheckoutPage() {
+            updateCart();
+            document.getElementById('main-content-layout').style.display = 'none';
+            document.getElementById('details-page-overlay').style.display = 'none';
+            document.getElementById('checkout-page-overlay').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function closeCheckoutPage() {
+            document.getElementById('checkout-page-overlay').style.display = 'none';
+            document.getElementById('main-content-layout').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
         
         function filterProducts(category) {
             if (category === 'all') { displayProducts(allProducts); } 
