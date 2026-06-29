@@ -3,24 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zaib Collection | Luxury Redefined</title>
+    <title>Zaib Collection</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-
-    <!-- Product Details Overlay -->
+    <!-- ===== DETAILS VIEW OVERLAY ===== -->
     <div id="details-page-overlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; overflow-y:auto; z-index:9999; background:#fcfbf9; padding:20px; box-sizing:border-box;">
         <div class="details-content-card">
             <button class="close-details-btn" onclick="closeDetailsPage()">&times; Close</button>
             <div class="details-layout-row">
                 <div class="details-img-block" id="det-img-box"></div>
                 <div class="details-text-block">
-                    <h2 id="det-title" style="font-family: 'Playfair Display', serif;"></h2>
+                    <h2 id="det-title"></h2>
                     <div id="det-price-box"></div>
                     <p id="det-description"></p>
                     
@@ -48,126 +47,149 @@
         </div>
     </div>
 
-    <!-- Main Layout -->
     <div id="main-content-layout">
-        
-        <!-- Modern Premium Navbar -->
-        <header class="modern-navbar">
-            <div class="nav-brand" onclick="filterProducts('all')">
-                <span class="brand-main">ZAIB COLLECTION</span>
-                <span class="brand-sub">SPRING</span>
+        <header class="navbar">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="filterProducts('all')">
+                <div class="flex items-center justify-center w-12 h-12 rounded-full border border-white/20 bg-white/10 shadow-sm shadow-black/10">
+                    <span class="text-xl font-semibold uppercase tracking-[0.24em] text-white" style="font-family: 'Playfair Display', serif;">Z</span>
+                </div>
+                <div class="flex flex-col leading-tight">
+                    <span class="text-xl font-semibold text-white" style="font-family: 'Playfair Display', serif;">Zaib Collection</span>
+                    <span class="text-xs uppercase tracking-[0.32em] text-white/70" style="font-family: 'Playfair Display', serif;">Luxury</span>
+                </div>
             </div>
-            
-            <nav class="nav-links">
-                <a href="#" onclick="filterProducts('all')" class="active">SHOP</a>
-                <a href="#" onclick="filterProducts('women')">WOMEN</a>
-                <a href="#" onclick="filterProducts('men')">MEN</a>
-                <a href="#" onclick="filterProducts('kids')">KIDS Wear</a>
-                <a href="#" onclick="filterProducts('jewelry')">JEWELRY</a>
+            <nav>
+                <a href="#" onclick="filterProducts('all')">All</a>
+                <a href="#" onclick="filterProducts('women')">Women</a>
+                <a href="#" onclick="filterProducts('men')">Men</a>
+                <a href="#" onclick="filterProducts('kids')">Kids</a>
+                <a href="#" onclick="filterProducts('jewelry')">Jewelry</a>
+                <a href="#" onclick="openCheckoutPage()" class="cart-nav">
+                    <i class="fas fa-shopping-cart"></i> Cart (<span id="cart-count">0</span>)
+                </a>
             </nav>
-
-            <div class="nav-actions">
-                <button aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
-                <button aria-label="Wishlist"><i class="fa-regular fa-heart"></i></button>
-                <button onclick="openCheckoutPage()" class="cart-btn-modern" aria-label="Cart">
-                    <i class="fa-solid fa-bag-shopping"></i>
-                    <span id="cart-count" class="cart-badge-dot">0</span>
-                </button>
-                <button aria-label="Profile"><i class="fa-regular fa-user"></i></button>
-            </div>
         </header>
 
-        <!-- Modern Split Hero Section -->
-        <section class="hero-container-modern" id="heroSlider">
-            <div class="hero-track-modern" id="heroTrack">
-                
-                <!-- Slide 1 -->
-                <div class="hero-slide-modern">
-                    <div class="slide-content-left">
-                        <span class="collection-tag">SPRING COLLECTION</span>
-                        <h2>20% OFF</h2>
-                        <p class="italic-sub">For Selected Spring Style</p>
-                        <div class="slider-dots-container">
-                            <span class="dot active"></span>
-                            <span class="dot"></span>
-                            <span class="dot"></span>
-                        </div>
-                        <button class="btn-shop-modern" onclick="location.href='#collection-title'">SHOP NOW</button>
-                    </div>
-                    <div class="slide-image-right">
-                        <img src="image/Slide1.webp" alt="Spring Style Minimal">
-                    </div>
-                </div>
-
-                <!-- Slide 2 -->
-                <div class="hero-slide-modern">
-                    <div class="slide-content-left">
-                        <span class="collection-tag">LUXURY LAWN</span>
-                        <h2>NEW IN</h2>
-                        <p class="italic-sub">Premium Unstitched Luxury Fabrics</p>
-                        <div class="slider-dots-container">
-                            <span class="dot"></span>
-                            <span class="dot active"></span>
-                            <span class="dot"></span>
-                        </div>
-                        <button class="btn-shop-modern" onclick="location.href='#collection-title'">EXPLORE</button>
-                    </div>
-                    <div class="slide-image-right">
-                        <img src="image/Slide2.webp" alt="Luxury Lawn Minimal">
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Slider Arrows -->
-            <button class="nav-arrow-modern prev" id="sliderPrev">&#8592;</button>
-            <button class="nav-arrow-modern next" id="sliderNext">&#8594;</button>
-        </section>
-
-        <!-- Infinite Ticker Text -->
-        <div class="ticker-wrap-modern">
-            <div class="ticker-inner-modern">
-                <span>✨ Welcome to Zaib Collection — Luxury Redefined ✨</span>
-                <span>100% Premium Quality Fabrics ✨</span>
-                <span>Happy Shopping ✨</span>
-                <span>✨ Welcome to Zaib Collection — Luxury Redefined ✨</span>
-                <span>100% Premium Quality Fabrics ✨</span>
+        <!-- Premium Infinite Text Ticker -->
+        <div class="w-full bg-black text-white py-3 overflow-hidden whitespace-nowrap relative select-none flex items-center" style="margin-top:18px;">
+            <div class="ticker-inner flex items-center whitespace-nowrap animate-marquee">
+                <span class="font-bold px-6">✨ Welcome to Zaib Collection — Luxury Redefined ✨</span>
+                <span class="font-bold px-6">Scroll Down to watch our latest collection ✨</span>
+                <span class="font-bold px-6">Happy Shopping ✨</span>
+                <span class="font-bold px-6">100% Premium Quality Fabrics ✨</span>
+                <span class="font-bold px-6">✨ Welcome to Zaib Collection — Luxury Redefined ✨</span>
+                <span class="font-bold px-6">Scroll Down to watch our latest collection ✨</span>
+                <span class="font-bold px-6">Happy Shopping ✨</span>
+                <span class="font-bold px-6">100% Premium Quality Fabrics ✨</span>
             </div>
         </div>
 
-        <h2 id="collection-title" class="section-heading-modern">Our Latest Collection</h2>
+        <!-- Premium Professional Banner Frame -->
+        <div class="w-full bg-[#fdfbf7] flex items-center justify-center overflow-hidden px-4 h-[380px] md:h-[480px]">
+            <img src="./image/Slide4.png" alt="Zaib Collection Banner" class="max-w-full h-full object-contain mx-auto transition-transform duration-700 hover:scale-105" />
+        </div><br><br><br>
+
+        <!-- ===== HERO SLIDER ===== -->
+        <style>
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        .hero-slider-wrap { position: relative; width: 100%; overflow: hidden; background: #000; }
+        .hero-slider-track { display: flex; transition: transform 0.75s cubic-bezier(0.77, 0, 0.18, 1); will-change: transform; }
+        .hero-slide { min-width: 100%; flex-shrink: 0; position: relative; aspect-ratio: 16 / 6; overflow: hidden; }
+        .hero-slide img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+        .hero-slide-overlay { position: absolute; inset: 0; background: linear-gradient(to right, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.15) 55%, transparent 100%); display: flex; align-items: center; padding: 0 6%; }
+        .hero-slide-text .badge { display: inline-block; font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; color: #e8c97a; margin-bottom: 10px; }
+        .hero-slide-text h2 { color: #fff; font-size: clamp(1.3rem, 3.5vw, 2.4rem); font-weight: 700; line-height: 1.2; margin: 0 0 8px; }
+        .hero-slide-text p { color: rgba(255,255,255,0.85); font-size: clamp(0.75rem, 1.6vw, 1rem); margin: 0 0 20px; }
+        .hero-slide-text .slide-btn { background: #e8c97a; color: #111; border: none; padding: 10px 26px; border-radius: 4px; font-size: 13px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; transition: background 0.2s; }
+        .hero-slide-text .slide-btn:hover { background: #d4b45e; }
+        .slider-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.15); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.3); color: #fff; width: 42px; height: 42px; border-radius: 50%; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; z-index: 10; transition: background 0.2s; user-select: none; }
+        .slider-arrow:hover { background: rgba(255,255,255,0.3); }
+        .slider-arrow.prev { left: 16px; }
+        .slider-arrow.next { right: 16px; }
+        .slider-dots { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 10; }
+        .slider-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.4); border: none; cursor: pointer; padding: 0; transition: background 0.3s, transform 0.3s; }
+        .slider-dot.active { background: #e8c97a; transform: scale(1.35); }
+        @media (max-width: 600px) { .hero-slide { aspect-ratio: 4 / 3; } .hero-slide img { object-position: center; } .slider-arrow { width: 34px; height: 34px; font-size: 16px; } }
+        </style>
+
+        <section class="hero-slider-wrap" id="heroSlider">
+          <div class="hero-slider-track" id="heroTrack">
+            <!-- Slide 1 -->
+            <div class="hero-slide">
+              <img src="image/Slide1.webp" alt="New Collection" loading="eager" />
+              <div class="hero-slide-overlay">
+                <div class="hero-slide-text">
+                  <span class="badge">New Arrival</span>
+                  <h2>Elegant Winter<br>Collection 2025</h2>
+                  <p>Premium fabrics, timeless style</p>
+                  <button class="slide-btn" onclick="location.href='#collection'">Shop Now</button>
+                </div>
+              </div>
+            </div>
+            <!-- Slide 2 -->
+            <div class="hero-slide">
+              <img src="image/Slide2.webp" alt="Lawn Collection" loading="lazy" />
+              <div class="hero-slide-overlay">
+                <div class="hero-slide-text">
+                  <span class="badge">Best Sellers</span>
+                  <h2>Luxury Lawn<br>&amp; Chiffon Suits</h2>
+                  <p>Unstitched &amp; ready-to-wear</p>
+                  <button class="slide-btn" onclick="location.href='#collection'">Explore</button>
+                </div>
+              </div>
+            </div>
+            <!-- Slide 3 -->
+            <div class="hero-slide">
+              <img src="image/Slide3.webp" alt="Festive Sale" loading="lazy" />
+              <div class="hero-slide-overlay">
+                <div class="hero-slide-text">
+                  <span class="badge">Special Offer</span>
+                  <h2>Festive Sale<br>Up to 40% Off</h2>
+                  <p>Limited time deals on all categories</p>
+                  <button class="slide-btn" onclick="location.href='#collection'">View Deals</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="slider-arrow prev" id="sliderPrev" aria-label="Previous slide">&#8592;</button>
+          <button class="slider-arrow next" id="sliderNext" aria-label="Next slide">&#8594;</button>
+          <div class="slider-dots" id="sliderDots">
+            <button class="slider-dot active" data-slide="0" aria-label="Slide 1"></button>
+            <button class="slider-dot" data-slide="1" aria-label="Slide 2"></button>
+            <button class="slider-dot" data-slide="2" aria-label="Slide 3"></button>
+          </div>
+        </section>
+
+        <h2 id="collection-title" style="text-align: center; margin-top: 30px; color: #8b7355;">Our Latest Collection</h2>
         <div id="product-grid" class="products-container"></div>
 
-        <footer class="modern-footer">
-            <p>© 2026 Zaib Collection | Luxury Redefined. All Rights Reserved.</p>
-            <p class="text-xs mt-1 text-neutral-500">Contact: seharkhan2028@gmail.com</p>
-        </footer>
+        <footer>Contact: seharkhan2028@gmail.com | Since 2020</footer>
     </div>
 
-    <!-- Checkout Page Overlay -->
+    <!-- ===== CHECKOUT FULL PAGE OVERLAY ===== -->
     <div id="checkout-page-overlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; overflow-y:auto; z-index:9999; background:#fcfbf9; box-sizing:border-box;">
         <div style="max-width:600px; margin:0 auto; padding:20px; box-sizing:border-box;">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; padding-bottom:16px; border-bottom:2px solid #e2e8f0;">
-                <h2 style="margin:0; font-size:20px; font-family:'Playfair Display', serif; color:#1e293b; display:flex; align-items:center; gap:10px;">
+                <h2 style="margin:0; font-size:20px; color:#1e293b; display:flex; align-items:center; gap:10px;">
                     <i class="fas fa-shopping-bag" style="color:#8b7355;"></i> Order Checkout
                 </h2>
-                <button onclick="closeCheckoutPage()" style="background:#111; color:white; border:none; padding:8px 16px; border-radius:4px; cursor:pointer; font-size:13px; font-weight:600;">
+                <button onclick="closeCheckoutPage()" style="background:#64748b; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-size:13px; font-weight:600;">
                     &times; Close
                 </button>
             </div>
 
-            <div style="background:white; border-radius:12px; border:1px solid #e2e8f0; padding:16px; margin-bottom:16px;">
+            <div style="background:white; border-radius:10px; border:1px solid #e2e8f0; padding:16px; margin-bottom:16px;">
                 <h4 style="margin:0 0 12px; font-size:15px; color:#475569;">🛒 Your Items</h4>
                 <div id="cart-summary-list"></div>
                 <hr style="border:0; border-top:1px dashed #e2e8f0; margin:12px 0;">
                 <div class="price-calc-box">
                     <p>Subtotal: <span id="bill-subtotal">Rs. 0</span></p>
                     <p>Delivery Charges: <span id="bill-delivery">Rs. 300</span></p>
-                    <h4 style="color:#111; font-size:18px; margin:5px 0; font-family:'Playfair Display', serif;">Total Bill: <span id="bill-total">Rs. 0</span></h4>
+                    <h4 style="color:#8b7355; font-size:18px; margin:5px 0;">Total Bill: <span id="bill-total">Rs. 0</span></h4>
                 </div>
             </div>
 
-            <div style="background:white; border-radius:12px; border:1px solid #e2e8f0; padding:16px; margin-bottom:16px;">
+            <div style="background:white; border-radius:10px; border:1px solid #e2e8f0; padding:16px; margin-bottom:16px;">
                 <h4 style="margin:0 0 14px; font-size:15px; color:#475569;">📋 Delivery Information</h4>
                 <div class="form-group">
                     <input type="text" id="cust-name" placeholder="Full Name" required>
@@ -179,7 +201,7 @@
                 </div>
             </div>
 
-            <div style="background:white; border-radius:12px; border:1px solid #e2e8f0; padding:16px; margin-bottom:16px;">
+            <div style="background:white; border-radius:10px; border:1px solid #e2e8f0; padding:16px; margin-bottom:16px;">
                 <div class="payment-method-section" style="background:transparent; border:none; padding:0; margin:0;">
                     <label style="display:block; font-weight:bold; margin-bottom:12px; color:#333;">📌 Select Payment Method:</label>
                     <div class="payment-radio-group">
@@ -189,12 +211,12 @@
                         </div>
                     </div>
                 </div>
-                <button class="btn-buy" id="confirm-btn" onclick="placeOrder()" style="margin-bottom:30px; background:#111; border-radius:4px;">Confirm Order (COD)</button>
             </div>
+            <button class="btn-buy" id="confirm-btn" onclick="placeOrder()" style="margin-bottom:30px;">Confirm Order (COD)</button>
         </div>
     </div>
 
-    <!-- Core Functional Logic Script -->
+    <!-- ===== LOGIC CORE SCRIPT ===== -->
     <script>
         let allProducts = []; 
         let cart = {}; 
@@ -207,69 +229,131 @@
 
         async function loadProducts() {
             const grid = document.getElementById('product-grid');
-            grid.innerHTML = Array(4).fill(`
-                <div class="product-card" style="pointer-events:none; opacity: 0.6;">
-                    <div style="width:100%; aspect-ratio:3/4; border-radius:8px; background:linear-gradient(90deg,#f0ece6 25%,#e8e3dc 50%,#f0ece6 75%); background-size:200% 100%; animation:shimmer 1.2s infinite;"></div>
+            grid.innerHTML = Array(6).fill(`
+                <div class="product-card" style="pointer-events:none;">
+                    <div style="width:100%;aspect-ratio:3/4;border-radius:8px;background:linear-gradient(90deg,#f0ece6 25%,#e8e3dc 50%,#f0ece6 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;"></div>
+                    <div style="height:14px;border-radius:4px;margin:12px 0 6px;background:linear-gradient(90deg,#f0ece6 25%,#e8e3dc 50%,#f0ece6 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;width:70%;"></div>
+                    <div style="height:14px;border-radius:4px;margin-bottom:14px;background:linear-gradient(90deg,#f0ece6 25%,#e8e3dc 50%,#f0ece6 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;width:40%;margin-left:auto;margin-right:auto;"></div>
                 </div>
             `).join('');
 
-            try {
-                const response = await fetch('/api/products');
-                if (!response.ok) throw new Error('HTTP ' + response.status);
-                allProducts = await response.json();
-                displayProducts(allProducts);
-            } catch(err) {
-                console.error(err);
-                grid.innerHTML = `<p class="col-span-full text-center py-10 text-neutral-500">Products load nahi ho sake. Dobara refresh karein.</p>`;
+            for (let attempt = 1; attempt <= 3; attempt++) {
+                try {
+                    const controller = new AbortController();
+                    const timeout = setTimeout(() => controller.abort(), 10000);
+                    const response = await fetch('/api/products', { signal: controller.signal });
+                    clearTimeout(timeout);
+                    if (!response.ok) throw new Error('HTTP ' + response.status);
+                    allProducts = await response.json();
+                    displayProducts(allProducts);
+                    return;
+                } catch(err) {
+                    if (attempt < 3) {
+                        await new Promise(r => setTimeout(r, 1500 * attempt));
+                    } else {
+                        grid.innerHTML = `
+                            <div style="text-align:center;padding:40px;grid-column:1/-1;">
+                                <p style="color:#888;margin-bottom:16px;">Products load nahi ho sake.</p>
+                                <button onclick="loadProducts()" style="background:#8b7355;color:white;border:none;padding:10px 24px;border-radius:6px;cursor:pointer;font-size:14px;font-weight:bold;">Dobara Try Karein</button>
+                            </div>`;
+                    }
+                }
             }
         }
 
         function displayProducts(productsToRules) {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = '';
+            Object.keys(productImageLists).forEach(key => delete productImageLists[key]);
+            Object.keys(productImageIndices).forEach(key => delete productImageIndices[key]);
+
             const fragment = document.createDocumentFragment();
 
             productsToRules.forEach((product, index) => {
                 const pId = product.name.replace(/\s+/g, '-').toLowerCase();
+                
                 let tagHTML = '';
-                if(product.statusTag === 'soldout') tagHTML = `<span class="badge badge-sold">SOLD OUT</span>`;
-                else if(product.statusTag === 'sale') tagHTML = `<span class="badge badge-sale">SALE</span>`;
+                if(product.statusTag === 'soldout') {
+                    tagHTML = `<span class="badge badge-sold">SOLD OUT</span>`;
+                } else if(product.statusTag === 'sale') {
+                    tagHTML = `<span class="badge badge-sale">SALE</span>`;
+                }
 
                 let priceHTML = `<p class="price">Rs. ${product.price}</p>`;
                 if(product.statusTag === 'sale' && product.oldPrice) {
-                    priceHTML = `<p class="price"><span class="old-price-cut">Rs. ${product.oldPrice}</span> <span>Rs. ${product.price}</span></p>`;
+                    priceHTML = `
+                        <p class="price">
+                            <span class="old-price-cut">Rs. ${product.oldPrice}</span> 
+                            <span style="font-weight:bold; color:#b45309;">Rs. ${product.price}</span>
+                        </p>`;
                 }
 
-                const imageList = Array.isArray(product.allImages) && product.allImages.length > 0 ? product.allImages : [product.imageUrl];
+                const imageList = Array.isArray(product.allImages) && product.allImages.length > 0
+                    ? product.allImages.slice()
+                    : (typeof product.imageUrl === 'string' && product.imageUrl.trim() !== '') ? [product.imageUrl] : [];
+
                 productImageLists[index] = imageList;
                 productImageIndices[index] = 0;
 
-                const hasVariants = (product.colors?.length > 0) || (product.sizes?.length > 0);
-                const isSoldOut = product.statusTag === 'soldout';
-                const actionClick = hasVariants ? `openDetailsPage(${index})` : `addToCart('${index}', '${pId}')`;
+                const hasMultipleImages = imageList.length > 1;
+                const initialImgSrc = imageList[0] || '';
+                const hasVariants = (Array.isArray(product.colors) && product.colors.length > 0) || (Array.isArray(product.sizes) && product.sizes.length > 0);
+                const isSoldOut = String(product.statusTag || '').toLowerCase() === 'soldout';
+                
+                const addToCartAction = hasVariants ? `openDetailsPage(${index})` : `addToCart('${index}', '${pId}')`;
+                const buyNowAction = hasVariants ? `openDetailsPage(${index})` : `buyNow('${index}', '${pId}')`;
 
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = `
                     <div class="product-card">
-                        <div class="relative overflow-hidden group rounded-md" onclick="openDetailsPage(${index})">
+                        <div style="position:relative; cursor:pointer;" onclick="openDetailsPage(${index})">
                             ${tagHTML}
-                            <img id="product-image-${index}" src="${imageList[0] || ''}" alt="${product.name}" loading="lazy">
+                            ${initialImgSrc ? `<img id="product-image-${index}" src="${initialImgSrc}" alt="${product.name}" loading="lazy">` : `<div class="product-img-placeholder">👗 No Image</div>`}
+                            ${hasMultipleImages ? `
+                                <button type="button" onclick="event.stopPropagation(); changeProductImage(${index}, -1)" style="position:absolute; top:50%; left:10px; transform:translateY(-50%); background:rgba(0,0,0,0.45); color:#fff; border:none; width:32px; height:32px; border-radius:50%; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;">&#8249;</button>
+                                <button type="button" onclick="event.stopPropagation(); changeProductImage(${index}, 1)" style="position:absolute; top:50%; right:10px; transform:translateY(-50%); background:rgba(0,0,0,0.45); color:#fff; border:none; width:32px; height:32px; border-radius:50%; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;">&#8250;</button>
+                            ` : ''}
                         </div>
-                        <h4 onclick="openDetailsPage(${index})">${product.name}</h4>
+                        <h4 onclick="openDetailsPage(${index})" style="cursor:pointer; font-weight: 500;">${product.name}</h4>
                         ${priceHTML}
+                        
+                        <!-- Operational Counter Interface Element -->
                         <div class="quantity-selector">
                             <button onclick="changeQtyValue('${pId}', -1)">-</button>
                             <span id="qty-${pId}">1</span>
                             <button onclick="changeQtyValue('${pId}', 1)">+</button>
                         </div>
-                        <button class="btn-primary" onclick="${actionClick}" ${isSoldOut ? 'disabled style="background:#ccc;"' : ''}>
-                            ${hasVariants ? 'SELECT OPTIONS' : 'ADD TO CART'}
-                        </button>
+                        <div class="card-buttons-row">
+                            <button class="btn-primary" onclick="${addToCartAction}" ${isSoldOut ? 'disabled style="background:#ccc;"' : ''}>${hasVariants ? 'SELECT OPTIONS' : 'ADD TO CART'}</button>
+                        </div>
                     </div>
                 `;
                 fragment.appendChild(tempDiv.firstElementChild);
             });
+
             grid.appendChild(fragment);
+        }
+
+        function changeProductImage(productIndex, direction) {
+            const images = productImageLists[productIndex];
+            if (!Array.isArray(images) || images.length === 0) return;
+            const imgElement = document.getElementById(`product-image-${productIndex}`);
+            if (!imgElement) return;
+            const currentIndex = typeof productImageIndices[productIndex] === 'number' ? productImageIndices[productIndex] : 0;
+            const nextIndex = (currentIndex + direction + images.length) % images.length;
+            productImageIndices[productIndex] = nextIndex;
+            imgElement.src = images[nextIndex];
+        }
+
+        function changeDetailImage(productIndex, direction) {
+            const images = productDetailImageLists[productIndex];
+            if (!Array.isArray(images) || images.length === 0) return;
+            const imgElement = document.getElementById(`detail-image-${productIndex}`);
+            if (!imgElement) return;
+            const currentIndex = typeof productDetailImageIndices[productIndex] === 'number' ? productDetailImageIndices[productIndex] : 0;
+            const nextIndex = (currentIndex + direction + images.length) % images.length;
+            productDetailImageIndices[productIndex] = nextIndex;
+            imgElement.src = images[nextIndex];
         }
 
         function changeQtyValue(pId, change) {
@@ -280,65 +364,254 @@
         }
 
         function cartItemKey(product, color, size) {
-            return `${product.id}::${color || 'default'}::${size || 'default'}`;
+            return `${product.id}::${color ? color.trim() : 'default'}::${size ? size.trim() : 'default'}`;
         }
 
-        // Zorurui logic functions inline context support
+        function getDetailVariants() {
+            return {
+                color: document.getElementById('det-color-select') ? document.getElementById('det-color-select').value : null,
+                size: document.getElementById('det-size-select') ? document.getElementById('det-size-select').value : null
+            };
+        }
+
         function addToCart(index, pId) {
             const product = allProducts[index];
             const qtySelected = parseInt(document.getElementById(`qty-${pId}`).innerText);
             const key = cartItemKey(product, null, null);
-            if (cart[key]) cart[key].quantity += qtySelected;
-            else cart[key] = { productId: product.id, name: product.name, price: parseInt(product.price), quantity: qtySelected };
+            if (cart[key]) { cart[key].quantity += qtySelected; } 
+            else { cart[key] = { productId: product.id, name: product.name, price: parseInt(product.price), quantity: qtySelected, color: null, size: null }; }
             updateCartUI();
-            alert("Cart me add ho gaya!");
+            alert("Added to cart!");
+            document.getElementById(`qty-${pId}`).innerText = 1;
+        }
+
+        function buyNow(index, pId) {
+            const product = allProducts[index];
+            const qtySelected = parseInt(document.getElementById(`qty-${pId}`).innerText);
+            const key = cartItemKey(product, null, null);
+            cart = {};
+            cart[key] = { productId: product.id, name: product.name, price: parseInt(product.price), quantity: qtySelected, color: null, size: null };
+            updateCartUI();
+            openCheckoutPage();
         }
 
         function updateCartUI() {
             let totalItems = 0, subtotal = 0;
             const summaryList = document.getElementById('cart-summary-list');
-            if(summaryList) summaryList.innerHTML = '';
+            summaryList.innerHTML = '';
             for (const key in cart) {
                 const item = cart[key];
                 totalItems += item.quantity;
                 subtotal += (item.price * item.quantity);
-                if(summaryList) summaryList.innerHTML += `<div class="cart-summary-item"><span><strong>${item.name}</strong> (x${item.quantity})</span><span>Rs. ${item.price * item.quantity}</span></div>`;
+                const variants = [item.color, item.size].filter(Boolean).join(' | ');
+                summaryList.innerHTML += `<div class="cart-summary-item"><span><strong>${item.name}</strong>${variants ? ` - ${variants}` : ''} (x${item.quantity})</span><span>Rs. ${item.price * item.quantity}</span></div>`;
             }
             document.getElementById('cart-count').innerText = totalItems;
             document.getElementById('bill-subtotal').innerText = `Rs. ${subtotal}`;
             document.getElementById('bill-total').innerText = `Rs. ${subtotal + DELIVERY_CHARGES}`;
         }
 
-        function openCheckoutPage() {
-            updateCartUI();
+        function openDetailsPage(index) {
+            const product = allProducts[index];
+            const pId = product.name.replace(/\s+/g, '-').toLowerCase();
+
             document.getElementById('main-content-layout').style.display = 'none';
-            document.getElementById('checkout-page-overlay').style.display = 'block';
+            document.getElementById('details-page-overlay').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            document.getElementById('det-title').innerText = product.name;
+            document.getElementById('det-description').innerText = product.details || "No additional parameters provided.";
+            
+            const detailImageList = Array.isArray(product.allImages) && product.allImages.length > 0
+                ? product.allImages.slice() : ((typeof product.imageUrl === 'string' && product.imageUrl.trim() !== '') ? [product.imageUrl] : []);
+
+            productDetailImageLists[index] = detailImageList;
+            productDetailImageIndices[index] = 0;
+
+            const hasDetailMultipleImages = detailImageList.length > 1;
+            const initialDetailImgSrc = detailImageList[0] || '';
+
+            let imgHTML = '';
+            if (initialDetailImgSrc) {
+                imgHTML = `
+                    <div style="position:relative; cursor:default;">
+                        <div class="aspect-[3/4] w-full overflow-hidden rounded-lg bg-white/5">
+                            <img id="detail-image-${index}" src="${initialDetailImgSrc}" class="w-full h-full object-contain" />
+                        </div>
+                        ${hasDetailMultipleImages ? `
+                            <button type="button" onclick="event.stopPropagation(); changeDetailImage(${index}, -1)" style="position:absolute; top:50%; left:12px; transform:translateY(-50%); background:rgba(0,0,0,0.5); color:#fff; border:none; width:36px; height:36px; border-radius:50%; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center;">&#8249;</button>
+                            <button type="button" onclick="event.stopPropagation(); changeDetailImage(${index}, 1)" style="position:absolute; top:50%; right:12px; transform:translateY(-50%); background:rgba(0,0,0,0.5); color:#fff; border:none; width:36px; height:36px; border-radius:50%; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center;">&#8250;</button>
+                        ` : ''}
+                    </div>
+                `;
+            } else { imgHTML = '<div class="product-img-placeholder">👗 No Image</div>'; }
+
+            document.getElementById('det-img-box').innerHTML = imgHTML;
+
+            let priceHTML = `<h3>Rs. ${product.price}</h3>`;
+            if(product.statusTag === 'sale' && product.oldPrice) {
+                priceHTML = `<h3><span class="old-price-cut">Rs. ${product.oldPrice}</span> <span style="color:#b45309;">Rs. ${product.price}</span></h3>`;
+            }
+
+            const colorOptions = Array.isArray(product.colors) && product.colors.length > 0 ? product.colors : [];
+            const sizeOptions = Array.isArray(product.sizes) && product.sizes.length > 0 ? product.sizes : [];
+            let variantSelectors = '';
+            if (colorOptions.length > 0) {
+                variantSelectors += `
+                    <div class="variant-selection-row" style="margin-top:18px;">
+                        <label for="det-color-select">Choose Color</label>
+                        <select id="det-color-select" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px; margin-top:8px;">
+                            <option value="">Select Color</option>
+                            ${colorOptions.map(color => `<option value="${color}">${color}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+            }
+            if (sizeOptions.length > 0) {
+                variantSelectors += `
+                    <div class="variant-selection-row" style="margin-top:18px;">
+                        <label for="det-size-select">Choose Size</label>
+                        <select id="det-size-select" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px; margin-top:8px;">
+                            <option value="">Select Size</option>
+                            ${sizeOptions.map(size => `<option value="${size}">${size}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+            }
+            
+            const isSoldOut = String(product.statusTag || '').toLowerCase() === 'soldout';
+
+            priceHTML += variantSelectors;
+            priceHTML += `
+                <div class="quantity-selector" style="justify-content: flex-start; margin: 20px 0;">
+                    <button onclick="changeQtyValue('${pId}-det', -1)">-</button>
+                    <span id="qty-${pId}-det">1</span>
+                    <button onclick="changeQtyValue('${pId}-det', 1)">+</button>
+                </div>
+                <div class="card-buttons-row" style="max-width: 300px;">
+                    <button class="btn-primary" onclick="addToCartFromDetails('${index}', '${pId}-det')" ${isSoldOut ? 'disabled style="background:#ccc;"' : ''}>Add to Cart</button>
+                    <button class="btn-secondary" onclick="buyNowFromDetails('${index}', '${pId}-det')" ${isSoldOut ? 'disabled style="background:#ccc;"' : ''}>Buy Now</button>
+                </div>
+            `;
+            
+            document.getElementById('det-price-box').innerHTML = priceHTML;
+
+            currentReviewProductId = product.id;
+            loadReviews(product.id);
+            document.getElementById('main-content-layout').style.display = 'none';
+            document.getElementById('checkout-page-overlay').style.display = 'none';
+            document.getElementById('details-page-overlay').style.display = 'block';
+            window.scrollTo(0, 0);
         }
-        function closeCheckoutPage() {
+
+        function closeDetailsPage() {
+            document.getElementById('details-page-overlay').style.display = 'none';
             document.getElementById('checkout-page-overlay').style.display = 'none';
             document.getElementById('main-content-layout').style.display = 'block';
-        }
-        function filterProducts(category) {
-            if (category === 'all') displayProducts(allProducts);
-            else displayProducts(allProducts.filter(p => p.category === category));
+            const grid = document.getElementById('product-grid');
+            const title = document.getElementById('collection-title');
+            if (grid) grid.style.display = 'grid';
+            if (title) title.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Modern Hero Slider Controller Setup
-        (function() {
-            const track = document.getElementById('heroTrack');
-            let current = 0;
-            const total = 2; // Fixed slider items for clean code structure
-            
-            document.getElementById('sliderNext').addEventListener('click', () => {
-                current = (current + 1) % total;
-                track.style.transform = `translateX(-${current * 100}%)`;
-            });
-            document.getElementById('sliderPrev').addEventListener('click', () => {
-                current = (current - 1 + total) % total;
-                track.style.transform = `translateX(-${current * 100}%)`;
-            });
-        })();
+        function validateVariantSelection(index) {
+            const product = allProducts[index];
+            const { color, size } = getDetailVariants();
+            if (Array.isArray(product.colors) && product.colors.length > 0 && !color) { alert('Please choose a color.'); return false; }
+            if (Array.isArray(product.sizes) && product.sizes.length > 0 && !size) { alert('Please choose a size.'); return false; }
+            return true;
+        }
 
+        function addToCartFromDetails(index, detailPId) {
+            const product = allProducts[index];
+            if (!validateVariantSelection(index)) return;
+            const { color, size } = getDetailVariants();
+            const qtySelected = parseInt(document.getElementById(`qty-${detailPId}`).innerText);
+            const key = cartItemKey(product, color, size);
+            if (cart[key]) { cart[key].quantity += qtySelected; } 
+            else { cart[key] = { productId: product.id, name: product.name, price: parseInt(product.price), quantity: qtySelected, color: color || null, size: size || null }; }
+            updateCartUI();
+            alert("Added to cart!");
+            document.getElementById(`qty-${detailPId}`).innerText = 1;
+        }
+
+        function buyNowFromDetails(index, detailPId) {
+            const product = allProducts[index];
+            if (!validateVariantSelection(index)) return;
+            const { color, size } = getDetailVariants();
+            const qtySelected = parseInt(document.getElementById(`qty-${detailPId}`).innerText);
+            const key = cartItemKey(product, color, size);
+            cart = {};
+            cart[key] = { productId: product.id, name: product.name, price: parseInt(product.price), quantity: qtySelected, color: color || null, size: size || null };
+            updateCartUI();
+            closeDetailsPage();
+            openCheckoutPage();
+        }
+
+        async function loadReviews(productId) {
+            const reviewsList = document.getElementById('live-reviews-list');
+            if (reviewsList) reviewsList.innerHTML = '<p style="color:#777; font-size:14px;">Loading reviews...</p>';
+            try {
+                const response = await fetch(`/api/reviews/${productId}`);
+                if (!response.ok) throw new Error('Failed to load reviews');
+                const reviews = await response.json();
+                if (!Array.isArray(reviews) || reviews.length === 0) {
+                    reviewsList.innerHTML = '<p style="color:#777; font-size:14px;">No reviews yet.</p>';
+                    return;
+                }
+                reviewsList.innerHTML = reviews.map(r => `
+                    <div style="margin-bottom:12px; padding:12px; border:1px solid #e2e8f0; border-radius:8px; background:#fff;">
+                        <p style="margin:0 0 6px; font-weight:700; color:#333;">${r.name} <span style="font-size:13px; color:#b45309;">(${r.rating}★)</span></p>
+                        <p style="margin:0 0 6px; color:#555;">${r.comment}</p>
+                    </div>`).join('');
+            } catch (err) { if (reviewsList) reviewsList.innerHTML = '<p style="color:#777; font-size:14px;">Unable to load reviews.</p>'; }
+        }
+
+        async function submitReview() {
+            const name = document.getElementById('rev-name').value.trim();
+            const rating = document.getElementById('rev-rating').value;
+            const text = document.getElementById('rev-text').value.trim();
+            if (!currentReviewProductId || !name || !text || !rating) { alert('Please fill all review fields.'); return; }
+            try {
+                const response = await fetch('/api/reviews', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId: currentReviewProductId, name, rating, comment: text })
+                });
+                const result = await response.json();
+                if (!response.ok || !result.success) throw new Error(result.message);
+                document.getElementById('rev-name').value = '';
+                document.getElementById('rev-rating').value = '';
+                document.getElementById('rev-text').value = '';
+                await loadReviews(currentReviewProductId);
+                alert('Review posted!');
+            } catch (err) { alert('Unable to submit review.'); }
+        }
+
+        async function placeOrder() {
+            const name = document.getElementById('cust-name').value;
+            const phone = document.getElementById('cust-phone').value;
+            const city = document.getElementById('cust-city').value;
+            const province = document.getElementById('cust-province').value;
+            const address = document.getElementById('cust-address').value;
+            if (!name || !phone || !city || !province || !address) { alert("Please fill all fields."); return; }
+            const subtotal = Object.values(cart).reduce((acc, item) => acc + (item.price * item.quantity), 0);
+            const orderData = { name, phone, city, province, address, cart, subtotal, delivery: DELIVERY_CHARGES, total: subtotal + DELIVERY_CHARGES, paymentMethod: 'cod' };
+            try {
+                const response = await fetch('/api/place-order', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(orderData) });
+                const result = await response.json();
+                if (result.success) {
+                    alert("🎉 Order confirm ho chuka hai!");
+                    cart = {}; updateCartUI(); closeCheckoutPage();
+                } else { alert("Error: " + result.message); }
+            } catch (err) { alert("Server error. Try again."); }
+        }
+
+        function openCheckoutPage() { updateCartUI(); document.getElementById('main-content-layout').style.display = 'none'; document.getElementById('details-page-overlay').style.display = 'none'; document.getElementById('checkout-page-overlay').style.display = 'block'; window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        function closeCheckoutPage() { document.getElementById('checkout-page-overlay').style.display = 'none'; document.getElementById('main-content-layout').style.display = 'block'; window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        function filterProducts(category) { if (category === 'all') { displayProducts(allProducts); } else { displayProducts(allProducts.filter(p => p.category === category)); } }
+        
         loadProducts();
     </script>
 </body>
