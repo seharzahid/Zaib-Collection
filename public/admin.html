@@ -1,8 +1,144 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Admin Panel - Zaib Collection</title>
+    <title>A&S Collections | Admin Dashboard</title>
     <style>
+
+        button{
+
+transition:.3s;
+
+}
+
+button:hover{
+
+transform:translateY(-2px);
+
+opacity:.9;
+
+}
+
+.prod-item{
+
+display:flex;
+
+align-items:center;
+
+justify-content:space-between;
+
+padding:15px;
+
+margin-bottom:12px;
+
+background:white;
+
+border-radius:10px;
+
+box-shadow:0 3px 8px rgba(0,0,0,.08);
+
+}
+
+.thumb{
+
+width:70px;
+
+height:70px;
+
+border-radius:10px;
+
+object-fit:cover;
+
+margin-right:15px;
+
+}
+
+.info{
+
+flex:1;
+
+display:flex;
+
+flex-direction:column;
+
+gap:5px;
+
+}
+
+#searchProduct{
+    width:100%;
+    padding:12px 15px;
+    border-radius:8px;
+    border:1px solid #ddd;
+    margin-bottom:20px;
+    font-size:15px;
+}
+
+#searchProduct:focus{
+    outline:none;
+    border-color:#D4AF37;
+}
+
+        .cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:20px;
+padding:25px;
+}
+
+.card{
+background:white;
+padding:25px;
+border-radius:12px;
+box-shadow:0 8px 20px rgba(0,0,0,.08);
+text-align:center;
+}
+
+.card h3{
+margin-bottom:10px;
+color:#777;
+}
+
+.card h2{
+color:#D4AF37;
+font-size:34px;
+}
+        :root{
+    --gold:#D4AF37;
+    --black:#111111;
+    --white:#ffffff;
+    --gray:#f5f5f5;
+}
+
+body{
+    margin:0;
+    font-family:Poppins,sans-serif;
+    background:#f4f4f4;
+}
+
+.topbar{
+    height:70px;
+    background:#111;
+    color:#fff;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 30px;
+}
+
+.brand h1{
+    margin:0;
+    color:var(--gold);
+    font-size:28px;
+}
+
+.brand span{
+    font-size:13px;
+    color:#ddd;
+}
+
+.admin-user{
+    font-weight:bold;
+}
         body { font-family: sans-serif; background-color: #fcfbf9; padding: 20px; }
         .container { max-width: 900px; margin: 0 auto; display: flex; gap: 20px; }
         .form-box { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); flex: 1; }
@@ -14,12 +150,48 @@
     </style>
 </head>
 <body>
+    <header class="topbar">
+    <div class="brand">
+        <h1>A&S Collections</h1>
+        <span>Admin Dashboard</span>
+    </div>
+
+    <div class="admin-user">
+        Welcome, Admin
+    </div>
+</header>
+
+<div class="cards">
+
+<div class="card">
+<h3>Total Products</h3>
+<h2 id="totalProducts">0</h2>
+</div>
+
+<div class="card">
+<h3>Categories</h3>
+<h2>4</h2>
+</div>
+
+<div class="card">
+<h3>Featured</h3>
+<h2 id="featuredCount">0</h2>
+</div>
+
+<div class="card">
+<h3>Reviews</h3>
+<h2 id="reviewCount">0</h2>
+</div>
+
+</div>
+
     <div class="container">
         <!-- Add Product Form -->
         <div class="form-box">
             <h2>Add New Article</h2>
             <form id="productForm" action="/api/products" method="POST" enctype="multipart/form-data" onsubmit="handleProductFormSubmit(event)">
                 <input type="text" name="name" placeholder="Product Name" required>
+                <input type="hidden" id="productId" name="productId">
                 <select name="category">
                     <option value="women">Women Collection</option>
                     <option value="men">Men Collection</option>
@@ -47,32 +219,95 @@
                 <input type="number" name="oldPrice" placeholder="Old Price (Rs.) - Leave empty if not on sale">
                 <textarea name="details" placeholder="Product Details..."></textarea>
                 <input type="file" name="images" multiple required>
-                <button type="submit">Upload Product</button>
+                <button type="submit" id="submitBtn">
+    Upload Product
+</button>
             </form>
         </div>
 
         <!-- Delete / Manage Products List -->
         <div class="manage-box">
+            <input
+    type="text"
+    id="searchProduct"
+    placeholder="🔍 Search Product..."
+    onkeyup="filterProducts()">
             <h2>Manage Live Articles</h2>
             <div id="admin-prod-list"></div>
         </div>
     </div>
 
     <script>
+        let allProducts = [];
         async function fetchAdminProducts() {
             const res = await fetch('/api/products');
             const data = await res.json();
-            const listDiv = document.getElementById('admin-prod-list');
-            listDiv.innerHTML = '';
-            data.forEach(p => {
-                listDiv.innerHTML += `
-                    <div class="prod-item">
-                        <span><strong>${p.name}</strong> (${p.category}) - Rs.${p.price}</span>
-                        <button class="btn-del" onclick="deleteProduct('${p.id}')">Delete</button>
-                    </div>
-                `;
-            });
+            allProducts = data;
+renderProducts(data);
+           function renderProducts(products){
+
+    const listDiv=document.getElementById("admin-prod-list");
+
+    listDiv.innerHTML="";
+
+    products.forEach(p=>{
+
+        listDiv.innerHTML+=`
+        <div class="prod-item">
+
+            <img src="${p.imageUrl}" class="thumb">
+
+            <div class="info">
+
+                <strong>${p.name}</strong>
+
+                <small>${p.category}</small>
+
+                <small>Rs ${p.price}</small>
+
+            </div>
+
+            <div>
+
+                <button onclick="editProduct('${p.id}')">✏ Edit</button>
+
+                <button class="btn-del" onclick="deleteProduct('${p.id}')">
+                🗑 Delete
+                </button>
+
+            </div>
+
+        </div>
+        `;
+
+    });
+
+}
+            document.getElementById("totalProducts").innerText = data.length;
+
+const featured = data.filter(p => p.featured);
+
+document.getElementById("featuredCount").innerText = featured.length;
         }
+        function filterProducts(){
+
+    const keyword=document
+        .getElementById("searchProduct")
+        .value
+        .toLowerCase();
+
+    const filtered=allProducts.filter(product=>{
+
+        return (
+            product.name.toLowerCase().includes(keyword) ||
+            product.category.toLowerCase().includes(keyword)
+        );
+
+    });
+
+    renderProducts(filtered);
+
+}
         async function deleteProduct(id) {
     if (!confirm("Are you sure you want to delete this product?")) return;
 
@@ -90,8 +325,37 @@
     } catch (err) {
         console.error("Delete Error:", err);
     }
-}
+ }
+          function editProduct(id){
 
+    const product = allProducts.find(p => p.id === id);
+
+    if(!product) return;
+
+    document.getElementById("productId").value = product.id;
+
+    document.querySelector('[name="name"]').value = product.name;
+    document.querySelector('[name="category"]').value = product.category;
+    document.querySelector('[name="price"]').value = product.price;
+    document.querySelector('[name="oldPrice"]').value = product.oldPrice || "";
+    document.querySelector('[name="details"]').value = product.details || "";
+    document.querySelector('[name="statusTag"]').value = product.statusTag || "normal";
+
+    document.getElementById("productColors").value =
+        (product.colors || []).join(", ");
+
+    document.getElementById("productSizes").value =
+        (product.sizes || []).join(", ");
+
+    document.getElementById("submitBtn").innerText = "Update Product";
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+        const productId = document.getElementById("productId").value;
         async function handleProductFormSubmit(event) {
             event.preventDefault();
             const form = document.getElementById('productForm');
@@ -101,15 +365,24 @@
             if (colorsValue) formData.set('colors', colorsValue);
             if (sizesValue) formData.set('sizes', sizesValue);
 
-            const response = await fetch(form.action, {
-                method: 'POST',
-                body: formData
-            });
+            const response = await fetch(
+
+    productId
+        ? `/api/products/${productId}`
+        : form.action,
+
+    {
+        method: productId ? "PUT" : "POST",
+        body: formData
+    }
+
+);
             const result = await response.json();
             if (result.success) {
                 alert('Product uploaded successfully!');
                 form.reset();
-                fetchAdminProducts();
+                document.getElementById("productId").value = "";
+            document.getElementById("submitBtn").innerText = "Upload Product";
             } else {
                 alert('Product upload failed: ' + (result.message || 'Please check your data.'));
             }

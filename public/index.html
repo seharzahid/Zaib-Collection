@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zaib Collection | Modern Fashion Store</title>
-    <meta name="description" content="Shop premium Pakistani fashion, jewelry, and ready-to-wear styles at Zaib Collection.">
+    <title>A&S Collections | Luxury Fashion Boutique</title>
+    <meta name="description" content="Shop premium Pakistani fashion, jewelry, and ready-to-wear styles at A&S Collections.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    
 </head>
 <body>
     <div id="main-content-layout">
@@ -20,10 +21,10 @@
         </div>
 
         <header class="site-header">
-            <button class="brand" type="button" onclick="filterProducts('all')" aria-label="Zaib Collection home">
-                <span class="brand-mark">Z</span>
+            <button class="brand" type="button" onclick="filterProducts('all')" aria-label="A&S Collections home">
+                <img src="image/logo.png" alt="A&S Collections Logo" class="logo">
                 <span>
-                    <strong>Zaib Collection</strong>
+                    <strong>A&S Collections</strong>
                     <small>Premium fashion store</small>
                 </span>
             </button>
@@ -46,7 +47,7 @@
         <main>
             <section class="hero-section">
                 <div class="hero-copy">
-                    <span class="eyebrow">Zaib Collection 2026</span>
+                    <span class="eyebrow">A&S Collections 2026</span>
                     <h1>Modern outfits for everyday elegance.</h1>
                     <p>Explore premium fabrics, graceful ready-to-wear styles, kidswear, and jewelry selected for refined daily dressing and special occasions.</p>
                     <div class="hero-actions">
@@ -60,7 +61,7 @@
                     </div>
                 </div>
                 <div class="hero-media" aria-label="Featured fashion collection">
-                    <img src="image/Slide4.png" alt="Zaib Collection featured banner">
+                    <img src="image/Intro.png" alt="A&S Collections featured banner">
                 </div>
             </section>
 
@@ -141,7 +142,7 @@
                 <div class="section-heading">
                     <span class="eyebrow">Latest collection</span>
                     <h2 id="collection-title">Shop New Arrivals</h2>
-                    <p>Browse the newest live articles from Zaib Collection.</p>
+                    <p>Browse the newest live articles from A&S Collections.</p>
                 </div>
                 <div id="product-grid" class="products-container" aria-live="polite"></div>
             </section>
@@ -149,10 +150,11 @@
 
         <footer class="site-footer">
             <div>
-                <strong>Zaib Collection</strong>
+                <strong>A&S Collections</strong>
                 <p>Premium fashion, jewelry, and seasonal outfits since 2020.</p>
             </div>
-            <a href="mailto:seharkhan2028@gmail.com">seharkhan2028@gmail.com</a>
+            <a href="https://www.instagram.com/AS_C0llections" target="_blank">Follow us on Instagram</a>
+            <a href="https://www.tiktok.com/@as_c0llections" target="_blank">Follow us on TikTok</a>
         </footer>
     </div>
 
@@ -345,11 +347,23 @@
                             <button class="image-nav left" type="button" onclick="event.stopPropagation(); changeProductImage(${index}, -1)" aria-label="Previous product image"><i class="fas fa-chevron-left"></i></button>
                             <button class="image-nav right" type="button" onclick="event.stopPropagation(); changeProductImage(${index}, 1)" aria-label="Next product image"><i class="fas fa-chevron-right"></i></button>
                         ` : ''}
+                        <button
+    class="wishlist-btn"
+    data-id="${product.id}"
+    onclick="toggleWishlist('${product.id}')">
+
+    <i class="fa-regular fa-heart"></i>
+
+   </button>
                     </div>
                     <div class="product-info">
                         <button class="product-title" type="button" onclick="openDetailsPage(${index})">${product.name}</button>
                         <p class="product-category">${product.category || 'Collection'}</p>
                         ${priceHTML}
+                        <div class="product-rating">
+    ⭐⭐⭐⭐⭐
+    <span>(<span id="rating-${product.id}">0</span>)</span>
+</div>
                         <div class="quantity-selector">
                             <button type="button" onclick="changeQtyValue('${pId}', -1)" aria-label="Decrease quantity">-</button>
                             <span id="qty-${pId}">1</span>
@@ -532,6 +546,9 @@
                     <button type="button" onclick="changeQtyValue('${pId}-det', 1)">+</button>
                 </div>
                 <div class="card-buttons-row details-actions">
+                    <button onclick="openQuickView('${product.id}')">
+    👁 Quick View
+</button>
                     <button class="btn-secondary" type="button" onclick="addToCartFromDetails(${index}, '${pId}-det')" ${isSoldOut ? 'disabled' : ''}>Add to Cart</button>
                     <button class="btn-primary" type="button" onclick="buyNowFromDetails(${index}, '${pId}-det')" ${isSoldOut ? 'disabled' : ''}>Buy Now</button>
                 </div>`;
@@ -741,6 +758,41 @@
             setTimeout(() => toast.remove(), 2200);
         }
 
+        let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+
+function toggleWishlist(productId){
+
+    const index = wishlist.indexOf(productId);
+
+    if(index === -1){
+        wishlist.push(productId);
+    }else{
+        wishlist.splice(index,1);
+    }
+
+    localStorage.setItem("wishlist", JSON.stringify(wishlist));
+
+    renderWishlistIcons();
+}
+
+function renderWishlistIcons(){
+
+    document.querySelectorAll(".wishlist-btn").forEach(btn=>{
+
+        const id = btn.getAttribute("data-id");
+
+        if(wishlist.includes(id)){
+            btn.classList.add("active");
+            btn.innerHTML='<i class="fa-solid fa-heart"></i>';
+        }else{
+            btn.classList.remove("active");
+            btn.innerHTML='<i class="fa-regular fa-heart"></i>';
+        }
+
+    });
+
+}
+
         (function initSlider() {
             const track = document.getElementById('heroTrack');
             const dots = document.querySelectorAll('#sliderDots button');
@@ -778,6 +830,137 @@
         })();
 
         loadProducts();
+        function openQuickView(id){
+
+    const product = allProducts.find(p => p.id === id);
+
+    if(!product) return;
+
+    document.getElementById("quickViewImage").src = product.imageUrl;
+
+    document.getElementById("quickViewName").innerText = product.name;
+
+    document.getElementById("quickViewPrice").innerText =
+        "Rs. " + product.price;
+
+    document.getElementById("quickViewDetails").innerText =
+        product.details || "";
+
+    document.getElementById("quickViewColors").innerText =
+        (product.colors || []).join(", ");
+
+    document.getElementById("quickViewSizes").innerText =
+        (product.sizes || []).join(", ");
+
+    document.getElementById("quickViewModal").style.display = "flex";
+}
+
+function closeQuickView(){
+
+    document.getElementById("quickViewModal").style.display = "none";
+
+}
+
+function openCart(){
+
+    document.getElementById("cartDrawer").classList.add("open");
+    document.getElementById("cartOverlay").classList.add("show");
+
+}
+
+function closeCart(){
+
+    document.getElementById("cartDrawer").classList.remove("open");
+    document.getElementById("cartOverlay").classList.remove("show");
+
+}
+async function loadProductRating(productId){
+
+    try{
+
+        const res = await fetch(`/api/reviews/${productId}`);
+        const reviews = await res.json();
+
+        const ratingElement = document.getElementById(`rating-${productId}`);
+
+        if(!reviews.length){
+
+            ratingElement.innerText = "No Reviews";
+            return;
+
+        }
+
+        const avg =
+            reviews.reduce((a,b)=>a+b.rating,0)/reviews.length;
+
+        ratingElement.innerText =
+            avg.toFixed(1) + " / 5";
+
+    }catch(err){
+
+        console.error(err);
+
+    }
+
+}
+products.forEach(product=>{
+
+    loadProductRating(product.id);
+
+});
+
+
     </script>
+
+    <div id="quickViewModal" class="quick-view-modal">
+    <div class="quick-view-content">
+        <span class="close-modal" onclick="closeQuickView()">&times;</span>
+
+        <div class="quick-view-grid">
+            <div>
+                <img id="quickViewImage" src="" alt="Product">
+            </div>
+
+            <div>
+                <h2 id="quickViewName"></h2>
+
+                <p id="quickViewPrice"></p>
+
+                <p id="quickViewDetails"></p>
+
+                <p>
+                    <strong>Colors:</strong>
+                    <span id="quickViewColors"></span>
+                </p>
+
+                <p>
+                    <strong>Sizes:</strong>
+                    <span id="quickViewSizes"></span>
+                </p>
+
+                <button id="quickAddToCart">
+                    Add to Cart
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="cartDrawer" class="cart-drawer">
+    <div class="cart-header">
+        <h2>Your Cart</h2>
+        <button onclick="closeCart()">✕</button>
+    </div>
+
+    <div id="cartItems" class="cart-items"></div>
+
+    <div class="cart-footer">
+        <h3>Total: <span id="cartTotal">Rs. 0</span></h3>
+        <button id="checkoutBtn">Proceed to Checkout</button>
+    </div>
+</div>
+
+<div id="cartOverlay" class="cart-overlay" onclick="closeCart()"></div>
+
 </body>
 </html>
