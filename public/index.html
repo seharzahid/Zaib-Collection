@@ -67,7 +67,7 @@
 
             <section class="promo-slider" aria-label="Featured promotions">
                 <div class="slider-track" id="heroTrack">
-                    <article class="slide">
+                    <article class="hero-slide">
                         <img src="image/Slide1.webp" alt="Winter collection">
                         <div>
                             <span>New Arrival</span>
@@ -75,7 +75,7 @@
                             <p>Layered looks, premium fabric, effortless styling.</p>
                         </div>
                     </article>
-                    <article class="slide">
+                    <article class="hero-slide">
                         <img src="image/Slide2.webp" alt="Luxury lawn and chiffon suits">
                         <div>
                             <span>Best Sellers</span>
@@ -83,7 +83,7 @@
                             <p>Fresh styles for casual days and festive plans.</p>
                         </div>
                     </article>
-                    <article class="slide">
+                    <article class="hero-slide">
                         <img src="image/Slide3.webp" alt="Festive sale collection">
                         <div>
                             <span>Special Offer</span>
@@ -300,8 +300,13 @@
         }
 
         function displayProducts(productsToShow) {
-            const grid = document.getElementById('product-grid');
-            grid.innerHTML = '';
+             console.log("displayProducts called");
+    console.log(productsToShow);
+
+    const grid = document.getElementById("product-grid");
+    console.log(grid);
+
+    grid.innerHTML = "";
             Object.keys(productImageLists).forEach(key => delete productImageLists[key]);
             Object.keys(productImageIndices).forEach(key => delete productImageIndices[key]);
 
@@ -316,6 +321,7 @@
 
             const fragment = document.createDocumentFragment();
             productsToShow.forEach(product => {
+                console.log(product);
                 const originalIndex = allProducts.findIndex(item => item.id === product.id);
                 const index = originalIndex >= 0 ? originalIndex : 0;
                 const pId = productDomId(product);
@@ -796,14 +802,15 @@ function renderWishlistIcons(){
         (function initSlider() {
             const track = document.getElementById('heroTrack');
             const dots = document.querySelectorAll('#sliderDots button');
-            const slides = document.querySelectorAll('.slide');
+            const slides = document.querySelectorAll(".hero-slide");
             if (!track || !slides.length) return;
             let current = 0;
             let timer;
 
             function goTo(n) {
                 current = ((n % slides.length) + slides.length) % slides.length;
-                track.style.transform = `translateX(-${current * 100}%)`;
+                const slideWidth = slides[0] ? slides[0].getBoundingClientRect().width : 0;
+                track.style.transform = slideWidth ? `translateX(-${current * slideWidth}px)` : `translateX(-${current * 100}%)`;
                 dots.forEach((dot, i) => dot.classList.toggle('active', i === current));
             }
 

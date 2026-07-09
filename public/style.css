@@ -264,9 +264,10 @@ img {
 .hero-stats span {
     min-height: 78px;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 4px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
     padding: 14px;
     background: rgba(255, 255, 255, 0.7);
     border: 1px solid rgba(229, 231, 235, 0.9);
@@ -299,36 +300,49 @@ img {
 .promo-slider {
     position: relative;
     overflow: hidden;
+    width: 100%;
     background: #111;
 }
 
 .slider-track {
     display: flex;
-    transition: transform 0.7s cubic-bezier(0.77, 0, 0.18, 1);
+    flex-direction: row;
+    flex-wrap: nowrap;
+    width: 300%;
+    transition: transform .5s ease;
+    will-change: transform;
 }
 
-.slide {
+.promo-slider .hero-slide,
+.promo-slider .slide {
     position: relative;
-    min-width: 100%;
+    flex: 0 0 33.3333%;
+    width: 33.3333%;
+    min-width: 33.3333%;
+    max-width: 33.3333%;
     height: 430px;
     overflow: hidden;
 }
 
-.slide img {
+.promo-slider .hero-slide img,
+.promo-slider .slide img {
     width: 100%;
+    display: block;
     height: 100%;
     object-fit: cover;
     object-position: center top;
 }
 
-.slide::after {
+.promo-slider .hero-slide::after,
+.promo-slider .slide::after {
     content: "";
     position: absolute;
     inset: 0;
     background: linear-gradient(90deg, rgba(0, 0, 0, 0.68), rgba(0, 0, 0, 0.18), transparent);
 }
 
-.slide div {
+.promo-slider .hero-slide > div,
+.promo-slider .slide > div {
     position: absolute;
     z-index: 2;
     left: 7vw;
@@ -338,7 +352,8 @@ img {
     color: #fff;
 }
 
-.slide span {
+.promo-slider .hero-slide span,
+.promo-slider .slide span {
     color: #f3cf8e;
     font-size: 12px;
     font-weight: 800;
@@ -346,13 +361,15 @@ img {
     text-transform: uppercase;
 }
 
-.slide h2 {
+.promo-slider .hero-slide h2,
+.promo-slider .slide h2 {
     margin: 10px 0;
     font-size: clamp(30px, 4vw, 54px);
     line-height: 1;
 }
 
-.slide p {
+.promo-slider .hero-slide p,
+.promo-slider .slide p {
     color: rgba(255, 255, 255, 0.84);
     font-size: 17px;
     line-height: 1.6;
@@ -422,10 +439,10 @@ img {
 .category-band button {
     min-height: 94px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    justify-content: center;
-    gap: 10px;
+    justify-content: space-evenly;
+    gap: 20px;
     color: var(--ink);
     font-weight: 800;
 }
@@ -1352,15 +1369,192 @@ img {
     font-size:30px;
     cursor:pointer;
 }
-@media(max-width:768px){
+/* ==========================================================================
+   A&S COLLECTIONS - COMPACT DESKTOP-LIKE MOBILE LAYOUT
+   ========================================================================== */
+@media screen and (max-width: 768px) {
+    
+    /* Hero Container Setup */
+    .hero, 
+    main section:first-of-type,
+    div[class*="hero-container"] {
+        display: grid !important;
+        grid-template-columns: 1.2fr 1fr !important; /* Side-by-side layout */
+        gap: 12px !important;
+        padding: 15px 10px !important;
+        
+        /* === PICTURE KO UPAR LAANE KA ASLI FIX === */
+        align-items: flex-start !important; /* Dono containers bilkul top se shuru honge */
+    }
 
+    /* Left Side Text Content */
+    .hero-content,
+    main section:first-of-type > div:first-child {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: flex-start !important;
+        padding-top: 5px !important; /* Text ko top se halka sa gap diya balance ke liye */
+    }
+       .hero-content .cta-group,
+    .hero-content div:has(button),
+    .hero-content div:has(a) {
+        display: flex !important;
+        flex-direction: row !important; /* Forcefully ek hi line mein rakhega */
+        gap: 8px !important; /* Dono buttons ke darmiyan halka sa gap */
+        width: 100% !important;
+        flex-wrap: nowrap !important; /* Line break nahi hone dega */
+        margin-top: 10px !important;
+    }
+
+    /* === INDIVIDUAL BUTTONS SIZING FOR MOBILE === */
+    .hero .btn,
+    main section:first-of-type button,
+    main section:first-of-type a[class*="btn"] {
+        flex: 1 !important; /* Dono buttons barabar ki width le kar screen pe fit ho sakein */
+        padding: 10px 8px !important; /* Mobile ke mutabiq touch spacing */
+        font-size: 0.78rem !important; /* Text thoda chota kiya taake button se bahar na nikle */
+        text-align: center !important;
+        white-space: nowrap !important; /* "Shop Collection" ko do lines mein tootne se rokega */
+        display: inline-flex !important;
+        justify-content: center;
+        align-items: center;
+    }
+    /* Right Side Banner Image Customization (No Crop Fix) */
+.hero-image,
+.hero img,
+main section:first-of-type img {
+    width: 100% !important;
+    
+    /* === FACE/CROP FIX === */
+    height: auto !important; /* Fixed height hata di taake image lambi ho sake */
+    max-height: 280px !important; /* Ek limit set ki taake screen se bahar na bhage */
+    
+    object-fit: contain !important; /* Image ko stretch ya crop nahi karega, poori picture show karega */
+    object-position: top center !important; /* Taake focus hamesha face aur dress ke shuruat par rahe */
+    
+    border-radius: 8px !important;
+    margin: 0 !important;
+}
+
+    /* 3. Category Grid Setup (Women, Men, Kids, Jewelry Buttons) */
+    .category-band {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important; /* 2x2 Clean layout */
+        gap: 8px !important;
+        padding: 10px !important;
+    }
+
+    .category-band button {
+        padding: 10px 5px !important;
+        font-size: 0.8rem !important;
+    }
+
+    /* 4. Product Grid Setup (2 Cards per row) */
+    #product-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+        padding: 10px !important;
+    }
+
+    /* ==========================================================================
+       STORE BENEFITS / FEATURES HORIZONTAL MOBLE LAYOUT FIX
+       ========================================================================== */
+    /* Agar aapke benefits container ki class .features ya .store-benefits hai */
+    .features,
+    .store-benefits,
+    div:has(> .feature-card) {
+        display: flex !important;
+        flex-direction: row !important; /* Forcefully vertical se horizontal line mein badla */
+        justify-content: space-between !important; /* Teeno cards ke darmiyan barabar gap */
+        align-items: center !important;
+        gap: 8px !important; /* Mobile screens par touch hone se bachane ke liye gap */
+        padding: 15px 10px !important;
+        width: 100% !important;
+    }
+
+    /* Individual feature card adjustments */
+    .feature-card,
+    .features > div,
+    .store-benefits > div {
+        flex: 1 !important; /* Teeno dhabbe bilkul barabar ki width lein */
+        text-align: center !important; /* Icons aur text center mein rahein */
+        padding: 8px 4px !important;
+    }
+
+    /* Feature card ke icons ka size control */
+    .feature-card i,
+    .features i,
+    .store-benefits i {
+        font-size: 1.2rem !important; /* Icons ko thoda chota kiya taake space bache */
+        margin-bottom: 5px !important;
+    }
+
+    /* Feature card ke headings aur text adjustments */
+    .feature-card h3,
+    .features h3,
+    .store-benefits h3 {
+        font-size: 0.75rem !important; /* Heading text compact kiya */
+        white-space: nowrap !important; /* Word ko tootne se rokega */
+        margin: 0 !important;
+    }
+
+    .feature-card p,
+    .features p,
+    .store-benefits p {
+        font-size: 0.65rem !important; /* Chota descriptive text optimized sizing */
+        margin-top: 2px !important;
+        line-height: 1.1 !important;
+    }
+
+    /* ==========================================================================
+       SMART ROW FIX (Directly targeting text nodes)
+       ========================================================================== */
+    /* Yeh un sabse chote containers ko target karega jisme 100% Premium ya COD likha hai */
+
+    /* Agar aapko pata hai ke ye teeno ek div ke andar hain, toh hum universal structure use karte hain */
+    main > section:nth-of-type(2),
+    main > div:nth-of-type(2),
+    .hero + div,
+    .hero + section {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: stretch !important;
+        gap: 8px !important;
+        padding: 10px 5px !important;
+        width: 100% !important;
+    }
+
+    /* Unke andar ke teeno dhabbe */
+    main > section:nth-of-type(2) > div,
+    main > div:nth-of-type(2) > div,
+    .hero + div> div,
+    .hero + section> div {
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+    }
+
+    /* Headings ka size scaling */
+    main h3, section h3 {
+        font-size: 0.7rem !important;
+        white-space: nowrap !important;
+    }
+
+    /* Paragraph text scaling */
+    main h3 + p, section h3 + p {
+        font-size: 0.58rem !important;
+        line-height: 1.1 !important;
+    }
+}
 .quick-view-grid{
 
 grid-template-columns:1fr;
 
 }
 
-}
 
 .cart-drawer{
     position:fixed;
@@ -1423,6 +1617,203 @@ grid-template-columns:1fr;
     height:60px;
     object-fit:contain;
     background-color: #16010d;
-    background-shape: circle;
     border-radius: 50%;
+}
+.hero-text{
+
+width:48%;
+
+}
+.hero-image{
+
+width:48%;
+
+}
+.hero-text h1{
+
+font-size:26px;
+
+}
+
+.hero-text p{
+
+font-size:14px;
+
+}
+.hero-image img{
+
+width:100%;
+height:auto;
+object-fit:cover;
+
+}
+
+/* ==========================================================================
+   FORCEFUL MOBILE STATS ROW FIX (100% Premium, COD, 2020)
+   ========================================================================== */
+@media screen and (max-width: 768px) {
+    
+    /* Pure container ko forcefully horizontal row banaya */
+    header + main .hero-stats,
+    .hero-stats,
+    [class*="hero-stats"] {
+        display: flex !important;
+        flex-direction: row !important; /* Ek hi line mein layega */
+        justify-content: space-between !important; /* Barabar phailayega */
+        align-items: center !important;
+        gap: 8px !important;
+        width: 100% !important;
+        padding: 10px 5px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Iske andar jo teeno alag alag items (spans) hain unka fix */
+    header + main .hero-stats span,
+    .hero-stats span,
+    [class*="hero-stats"] span {
+        flex: 1 !important; /* Teeno ko 33% barabar space dega */
+        display: block !important;
+        font-size: 0.65rem !important; /* Chota size taake screen se bahar na jaye */
+        text-align: center !important; /* Text ko center kiya */
+        line-height: 1.2 !important;
+        white-space: normal !important; /* Text ko wrap hone dega agar space kam ho */
+    }
+
+    /* Numbers (100%, COD, 2020) ko handle karne ke liye */
+    header + main .hero-stats span strong,
+    .hero-stats span strong,
+    [class*="hero-stats"] span strong {
+        font-size: 0.8rem !important; /* Numbers thode bade aur bold dikhenge */
+        display: block !important; /* Number ke neeche text aayega jo bohot premium lagta hai */
+        margin-bottom: 2px !important;
+        text-align: center !important;
+    }
+}
+/* ==========================================================================
+   MOBILE PROMO SLIDER FIX
+   ========================================================================== */
+@media screen and (max-width: 768px) {
+    .promo-slider {
+        overflow: hidden !important;
+        position: relative !important;
+    }
+
+    .promo-slider .slider-track {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        width: 100% !important;
+        align-items: stretch !important;
+    }
+
+    .promo-slider .hero-slide,
+    .promo-slider .slide {
+        position: relative !important;
+        flex: 0 0 100% !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 100% !important;
+        flex-shrink: 0 !important;
+        height: 240px !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+        display: block !important;
+    }
+
+    .promo-slider .hero-slide img,
+    .promo-slider .slide img {
+        width: 100% !important;
+        height: 100% !important;
+        display: block !important;
+        object-fit: cover !important;
+    }
+
+    .promo-slider .hero-slide > div,
+    .promo-slider .slide > div {
+        display: block !important;
+        position: absolute !important;
+        z-index: 2 !important;
+        left: 7vw !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        max-width: 430px !important;
+        color: #fff !important;
+    }
+
+    .promo-slider .hero-slide span,
+    .promo-slider .slide span {
+        display: inline-block !important;
+        color: #f3cf8e !important;
+        font-size: 12px !important;
+        font-weight: 800 !important;
+        letter-spacing: 0.14em !important;
+        text-transform: uppercase !important;
+    }
+
+    .promo-slider .hero-slide h2,
+    .promo-slider .slide h2 {
+        display: block !important;
+        margin: 10px 0 !important;
+        font-size: clamp(24px, 5vw, 36px) !important;
+        line-height: 1.05 !important;
+    }
+
+    .promo-slider .hero-slide p,
+    .promo-slider .slide p {
+        display: block !important;
+        color: rgba(255, 255, 255, 0.84) !important;
+        font-size: 15px !important;
+        line-height: 1.5 !important;
+    }
+
+    .promo-slider .slider-dots {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 8px !important;
+        left: 50% !important;
+        bottom: 16px !important;
+        transform: translateX(-50%) !important;
+    }
+
+    .promo-slider .slider-dots button {
+        flex: 0 0 auto !important;
+    }
+}
+/* ==========================================================================
+   MOBILE HERO HERO-MEDIA BOTTOM WHITE SPACE REMOVAL
+   ========================================================================== */
+@media screen and (max-width: 768px) {
+    
+    /* Hero section aur content layouts ke margins ko zero kiya */
+    .hero-section,
+    #main-content-layout,
+    main {
+        padding-bottom: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+    /* Image container ka bottom extra space strip karne ke liye */
+    .hero-media,
+    div[class*="hero-media"] {
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+        line-height: 0 !important; /* Image ke neeche ka default inline gap khatam karega */
+        display: block !important;
+    }
+
+    /* Asal intro image ka alignment lock */
+    .hero-media img {
+        display: block !important;
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+    }
+
+    /* Slider section ko upar wali image ke sath perfectly chipkane ke liye */
+    .promo-slider,
+    section[class*="promo-slider"] {
+        margin-top: 0 !important; /* Agar koi top margin hai toh zero ho jaye */
+        position: relative !important;
+    }
 }

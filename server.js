@@ -1,3 +1,8 @@
+app.use((req, res, next) => {
+    res.removeHeader("Content-Security-Policy");
+    next();
+});
+
 require("dotenv").config();
 
 const express = require("express");
@@ -13,7 +18,7 @@ const nodemailer = require("nodemailer");
 const app = express();
 
 // Middleware
-app.use(helmet());
+//app.use(helmet());
 app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json({ limit: '1mb' }));
@@ -28,7 +33,7 @@ const upload = multer({ storage });
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 // MongoDB connection
@@ -175,9 +180,9 @@ if (errors.length) {
       details: req.body.details,
       colors: (req.body.colors || "").split(',').map(c => c.trim()).filter(Boolean),
       sizes: (req.body.sizes || "").split(',').map(s => s.trim()).filter(Boolean),
-      allImages: uploadedImages.map(img => img.url),
-allImagePublicIds: uploadedImages.map(img => img.public_id),
-imageUrl: uploadedImages[0].url
+      allImages: imageUrls.map(img => img.url),
+allImagePublicIds: imageUrls.map(img => img.public_id),
+imageUrl: imageUrls[0].url
     });
 
     await newProduct.save();
@@ -251,43 +256,37 @@ app.put("/api/products/:id", async (req, res) => {
   }
 });
 
-app.delete("/api/products/:id", async (req, res) => {
-    try {
+app.delete('/api/products/:id', async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
 
-        const product = await Product.findById(req.params.id);
-
-        if (!product) {
-            return res.status(404).json({
-                success: false,
-                message: "Product not found"
-            });
-        }
-
-        if (product.allImagePublicIds?.length) {
-
-            await Promise.all(
-                product.allImagePublicIds.map(publicId =>
-                    cloudinary.uploader.destroy(publicId)
-                )
-            );
-
-        }
-
-        await Product.findByIdAndDelete(req.params.id);
-
-        res.json({
-            success: true,
-            message: "Product and images deleted successfully"
-        });
-
-    } catch (err) {
-
-        res.status(500).json({
-            success: false,
-            error: err.message
-        });
-
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found"
+      });
     }
+
+    if (product.allImagePublicIds?.length) {
+      await Promise.all(
+        product.allImagePublicIds.map(publicId =>
+          cloudinary.uploader.destroy(publicId)
+        )
+      );
+    }
+
+    await Product.findByIdAndDelete(req.params.id);
+
+    res.json({
+      success: true,
+      message: "Product and images deleted successfully"
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: err.message
+    });
+  }
 });
 
 // Reviews

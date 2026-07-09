@@ -242,10 +242,35 @@ body{
         async function fetchAdminProducts() {
             const res = await fetch('/api/products');
             const data = await res.json();
+            console.log(data);
             allProducts = data;
 renderProducts(data);
-           function renderProducts(products){
+           
+            document.getElementById("totalProducts").innerText = data.length;
 
+res.json(products.map(p => ({
+    id: p._id,
+    name: p.name,
+    price: p.price,
+    oldPrice: p.oldPrice,
+    details: p.details,
+    category: p.category,
+    statusTag: p.statusTag,
+    imageUrl: p.imageUrl,
+    allImages: p.allImages || [],
+    colors: p.colors || [],
+    sizes: p.sizes || [],
+    featured: p.featured,
+    trending: p.trending,
+    stock: p.stock,
+    sku: p.sku
+})));
+
+document.getElementById("featuredCount").innerText = featured.length;
+        }
+
+function renderProducts(products){
+    console.log(products);
     const listDiv=document.getElementById("admin-prod-list");
 
     listDiv.innerHTML="";
@@ -255,7 +280,7 @@ renderProducts(data);
         listDiv.innerHTML+=`
         <div class="prod-item">
 
-            <img src="${p.imageUrl}" class="thumb">
+            <img src="${p.imageUrl || (p.allImages && p.allImages[0]) || 'https://placehold.co/70x70?text=No+Image'}" class="thumb">
 
             <div class="info">
 
@@ -283,12 +308,7 @@ renderProducts(data);
     });
 
 }
-            document.getElementById("totalProducts").innerText = data.length;
 
-const featured = data.filter(p => p.featured);
-
-document.getElementById("featuredCount").innerText = featured.length;
-        }
         function filterProducts(){
 
     const keyword=document
@@ -355,9 +375,12 @@ document.getElementById("featuredCount").innerText = featured.length;
     });
 
 }
-        const productId = document.getElementById("productId").value;
+
+
+        
         async function handleProductFormSubmit(event) {
             event.preventDefault();
+            const productId = document.getElementById("productId").value;
             const form = document.getElementById('productForm');
             const formData = new FormData(form);
             const colorsValue = document.getElementById('productColors').value.trim();
@@ -379,11 +402,18 @@ document.getElementById("featuredCount").innerText = featured.length;
 );
             const result = await response.json();
             if (result.success) {
-                alert('Product uploaded successfully!');
-                form.reset();
-                document.getElementById("productId").value = "";
-            document.getElementById("submitBtn").innerText = "Upload Product";
-            } else {
+
+    alert('Product uploaded successfully!');
+
+    form.reset();
+
+    document.getElementById("productId").value = "";
+
+    document.getElementById("submitBtn").innerText = "Upload Product";
+
+    fetchAdminProducts(); // <-- list refresh
+
+} else {
                 alert('Product upload failed: ' + (result.message || 'Please check your data.'));
             }
         }
